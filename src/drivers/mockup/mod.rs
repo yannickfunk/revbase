@@ -37,4 +37,8 @@ impl Queries for Mockup {
             online: None,
         })
     }
+
+    async fn get_users(&self, user_ids: Vec<&str>) -> Result<Vec<User>> {
+        todo!()
+    }
 }

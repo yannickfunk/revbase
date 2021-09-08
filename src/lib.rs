@@ -14,6 +14,7 @@ pub mod util;
 pub trait Queries {
     async fn get_user_by_id(&self, id: &str) -> Result<User>;
     async fn get_user_by_username(&self, username: &str) -> Result<User>;
+    async fn get_users(&self, user_ids: Vec<&str>) -> Result<Vec<User>>;
 }
 
 #[enum_dispatch(Queries)]
@@ -49,6 +50,10 @@ impl Queries for Database {
     async fn get_user_by_username(&self, username: &str) -> Result<User> {
         self.driver.get_user_by_username(username).await
     }
+
+    async fn get_users(&self, user_ids: Vec<&str>) -> Result<Vec<User>> {
+        self.driver.get_users(user_ids).await
+    }
 }
 
 #[cfg(test)]
@@ -62,9 +67,12 @@ mod tests {
         env_logger::init_from_env(env_logger::Env::default().filter_or("RUST_LOG", "info"));
         let user = async_std::task::block_on(async {
             let driver = MongoDB::new("").await;
-            let driver = Mockup {};
-            let db = Database::new_from_mockup(driver);
-            db.get_user_by_username("penis").await
+            let db = Database::new_from_mongo(driver);
+            db.get_users(vec![
+                "01FDFSV68HTQ164AZPKJE879Z2",
+                "01FDX1DHBVS9NF6KSQECFVRFGB",
+            ])
+            .await
         });
         println!("{:?}", user);
     }

@@ -5,11 +5,14 @@ use crate::Queries as DatabaseTrait;
 use migrations::{init, scripts};
 use mongodb::{
     bson::{doc, from_document},
-    options::{Collation, FindOneOptions},
+    error::Result as MongoResult,
+    options::{Collation, FindOneOptions, FindOptions},
     Client, Collection, Database,
 };
 
+use futures::{StreamExt, TryStreamExt};
 use rocket::async_trait;
+use rocket::http::ext::IntoCollection;
 
 pub struct MongoDB {
     connection: Client,
@@ -48,8 +51,9 @@ impl MongoDB {
 #[async_trait]
 impl DatabaseTrait for MongoDB {
     async fn get_user_by_id(&self, id: &str) -> Result<User> {
-        let collection = self.revolt.collection("users");
-        if let Some(doc) = collection
+        if let Some(doc) = self
+            .revolt
+            .collection("users")
             .find_one(
                 doc! {
                     "_id": &id
@@ -90,5 +94,37 @@ impl DatabaseTrait for MongoDB {
         } else {
             Err(Error::NotFound)
         }
+    }
+
+    async fn get_users(&self, user_ids: Vec<&str>) -> Result<Vec<User>> {
+        let mut cursor = self.revolt.collection("users")
+            .find(
+                doc! {
+                    "_id": {
+                        "$in": user_ids
+                    }
+                },
+                FindOptions::builder()
+                    .projection(
+                        doc! { "_id": 1, "username": 1, "avatar": 1, "badges": 1, "status": 1, "flags": 1, "bot": 1 },
+                    )
+                    .build(),
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find",
+                with: "users",
+            })?;
+        let mut users = vec![];
+        while let Some(result) = cursor.next().await {
+            if let Ok(doc) = result {
+                let user: User = from_document(doc).map_err(|_| Error::DatabaseError {
+                    operation: "from_document",
+                    with: "user",
+                })?;
+                users.push(user);
+            }
+        }
+        Ok(users)
     }
 }
