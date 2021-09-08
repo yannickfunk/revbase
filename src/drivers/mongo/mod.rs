@@ -1,12 +1,14 @@
 mod migrations;
 use crate::entities::User;
 use crate::util::result::*;
-use crate::Database as DatabaseTrait;
+use crate::Queries as DatabaseTrait;
 use migrations::{init, scripts};
 use mongodb::{
     bson::{doc, from_document},
+    options::{Collation, FindOneOptions},
     Client, Collection, Database,
 };
+
 use rocket::async_trait;
 
 pub struct MongoDB {
@@ -65,21 +67,28 @@ impl DatabaseTrait for MongoDB {
             Err(Error::NotFound)
         }
     }
-}
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use async_std;
-    use env_logger;
-
-    #[test]
-    fn it_works() {
-        env_logger::init_from_env(env_logger::Env::default().filter_or("RUST_LOG", "info"));
-        let user = async_std::task::block_on(async {
-            let mongo = MongoDB::new("").await;
-            mongo.get_user_by_id("01FDFSV68HTQ164AZPKJE879Z2").await
-        });
-        println!("{:?}", user);
+    async fn get_user_by_username(&self, username: &str) -> Result<User> {
+        if let Some(doc) = self
+            .revolt
+            .collection("users")
+            .find_one(
+                doc! {
+                    "username": username
+                },
+                FindOneOptions::builder()
+                    .collation(Collation::builder().locale("en").strength(2).build())
+                    .build(),
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find_one",
+                with: "user",
+            })?
+        {
+            Ok(from_document(doc).expect("schema should match"))
+        } else {
+            Err(Error::NotFound)
+        }
     }
 }
