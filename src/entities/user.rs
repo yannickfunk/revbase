@@ -1,4 +1,7 @@
+use super::microservice::autumn::File;
 use futures::StreamExt;
+use impl_ops::*;
+use lazy_static::lazy_static;
 use mongodb::bson::Document;
 use mongodb::options::{Collation, FindOneOptions};
 use mongodb::{
@@ -11,11 +14,14 @@ use std::ops;
 use ulid::Ulid;
 use validator::Validate;
 
+/*
 use crate::database::permissions::user::UserPermissions;
 use crate::database::*;
 use crate::notifications::websocket::is_online;
 use crate::util::result::{Error, Result};
 use crate::util::variables::EARLY_ADOPTER_BADGE;
+
+ */
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub enum RelationshipStatus {
@@ -75,7 +81,7 @@ impl_op_ex_commutative!(+ |a: &i32, b: &Badges| -> i32 { *a | *b as i32 });
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct BotInformation {
-    owner: String
+    owner: String,
 }
 
 // When changing this struct, update notifications/payload.rs#113
@@ -108,6 +114,7 @@ pub struct User {
     pub online: Option<bool>,
 }
 
+/*
 impl User {
     /// Mutate the user object to include relationship as seen by user.
     pub fn from(mut self, user: &User) -> User {
@@ -324,3 +331,4 @@ impl User {
             .await)
     }
 }
+*/

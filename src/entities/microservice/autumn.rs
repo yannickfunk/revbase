@@ -1,9 +1,9 @@
 use mongodb::bson::{doc, from_document};
 use serde::{Deserialize, Serialize};
 
-use crate::database::*;
+// use crate::database::*;
 use crate::util::result::{Error, Result};
-use crate::util::variables::AUTUMN_URL;
+// use crate::util::variables::AUTUMN_URL;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "type")]
@@ -38,6 +38,7 @@ pub struct File {
     object_id: Option<String>,
 }
 
+/*
 impl File {
     pub async fn find_and_use(
         attachment_id: &str,
@@ -115,6 +116,7 @@ impl File {
     }
 
     pub fn get_autumn_url(&self) -> String {
-        format!("{}/{}/{}", AUTUMN_URL.as_str(), self.tag, self.id)
+        format!("test/{}/{}", self.tag, self.id)
     }
 }
+*/
