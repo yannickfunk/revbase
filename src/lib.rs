@@ -20,6 +20,10 @@ pub trait Queries {
     async fn get_users_as_banned_users(&self, user_ids: Vec<&str>) -> Result<Vec<BannedUser>>;
     async fn get_bot_users_owned_by_user_id(&self, id: &str) -> Result<Vec<User>>;
     async fn get_bots_owned_by_user_id(&self, id: &str) -> Result<Vec<Bot>>;
+    async fn get_mutual_friends_ids(&self, user_id_a: &str, user_id_b: &str)
+        -> Result<Vec<String>>;
+    async fn add_user(&self, id: &str, username: &str) -> Result<()>;
+    async fn add_bot_user(&self, id: &str, username: &str, owner_id: &str) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -71,6 +75,24 @@ impl Queries for Database {
     async fn get_bots_owned_by_user_id(&self, id: &str) -> Result<Vec<Bot>> {
         self.driver.get_bots_owned_by_user_id(id).await
     }
+
+    async fn get_mutual_friends_ids(
+        &self,
+        user_id_a: &str,
+        user_id_b: &str,
+    ) -> Result<Vec<String>> {
+        self.driver
+            .get_mutual_friends_ids(user_id_a, user_id_b)
+            .await
+    }
+
+    async fn add_user(&self, id: &str, username: &str) -> Result<()> {
+        self.driver.add_user(id, username).await
+    }
+
+    async fn add_bot_user(&self, id: &str, username: &str, owner_id: &str) -> Result<()> {
+        self.driver.add_bot_user(id, username, owner_id).await
+    }
 }
 
 #[cfg(test)]
@@ -85,11 +107,11 @@ mod tests {
         let user = async_std::task::block_on(async {
             let driver = MongoDB::new("").await;
             let db = Database::new_from_mongo(driver);
-            db.get_users(vec![
-                "01FDFSV68HTQ164AZPKJE879Z2",
-                "01FDX1DHBVS9NF6KSQECFVRFGB",
-            ])
-            .await
+            let mutual_friends = db
+                .get_mutual_friends_ids("01FDX1NCVAKFPVSXNNVEVMQHAF", "01FDX1DHBVS9NF6KSQECFVRFGB")
+                .await
+                .unwrap();
+            db.get_user_by_id(&mutual_friends[0]).await
         });
         println!("{:?}", user);
     }

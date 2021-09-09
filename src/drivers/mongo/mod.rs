@@ -207,4 +207,73 @@ impl Queries for MongoDB {
             .filter_map(|x| from_document(x).ok())
             .collect::<Vec<Bot>>())
     }
+
+    async fn get_mutual_friends_ids(
+        &self,
+        user_id_a: &str,
+        user_id_b: &str,
+    ) -> Result<Vec<String>> {
+        Ok(self
+            .revolt
+            .collection("users")
+            .find(
+                doc! {
+                    "$and": [
+                        { "relations": { "$elemMatch": { "_id": user_id_a, "status": "Friend" } } },
+                        { "relations": { "$elemMatch": { "_id": user_id_b, "status": "Friend" } } }
+                    ]
+                },
+                FindOptions::builder().projection(doc! { "_id": 1 }).build(),
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find",
+                with: "users",
+            })?
+            .filter_map(async move |s| s.ok())
+            .collect::<Vec<Document>>()
+            .await
+            .into_iter()
+            .filter_map(|x| x.get_str("_id").ok().map(|x| x.to_string()))
+            .collect())
+    }
+
+    async fn add_user(&self, id: &str, username: &str) -> Result<()> {
+        self.revolt
+            .collection("users")
+            .insert_one(
+                doc! {
+                    "_id": id,
+                    "username": username
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "insert_one",
+                with: "user",
+            })?;
+        Ok(())
+    }
+
+    async fn add_bot_user(&self, id: &str, username: &str, owner_id: &str) -> Result<()> {
+        self.revolt
+            .collection("users")
+            .insert_one(
+                doc! {
+                    "_id": id,
+                    "username": username,
+                    "bot": {
+                        "owner": owner_id
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "insert_one",
+                with: "user",
+            })?;
+        Ok(())
+    }
 }
