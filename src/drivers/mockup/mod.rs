@@ -69,4 +69,12 @@ impl Queries for Mockup {
     async fn add_bot_user(&self, id: &str, username: &str, owner_id: &str) -> Result<()> {
         todo!()
     }
+
+    async fn make_bot_user_deleted(&self, id: &str) -> Result<()> {
+        todo!()
+    }
+
+    async fn update_username(&self, id: &str, new_username: &str) -> Result<()> {
+        todo!()
+    }
 }

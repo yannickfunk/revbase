@@ -24,6 +24,8 @@ pub trait Queries {
         -> Result<Vec<String>>;
     async fn add_user(&self, id: &str, username: &str) -> Result<()>;
     async fn add_bot_user(&self, id: &str, username: &str, owner_id: &str) -> Result<()>;
+    async fn make_bot_user_deleted(&self, id: &str) -> Result<()>;
+    async fn update_username(&self, id: &str, new_username: &str) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -92,6 +94,14 @@ impl Queries for Database {
 
     async fn add_bot_user(&self, id: &str, username: &str, owner_id: &str) -> Result<()> {
         self.driver.add_bot_user(id, username, owner_id).await
+    }
+
+    async fn make_bot_user_deleted(&self, id: &str) -> Result<()> {
+        self.driver.make_bot_user_deleted(id).await
+    }
+
+    async fn update_username(&self, id: &str, new_username: &str) -> Result<()> {
+        self.driver.update_username(id, new_username).await
     }
 }
 

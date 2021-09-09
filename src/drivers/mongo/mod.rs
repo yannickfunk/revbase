@@ -276,4 +276,53 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn make_bot_user_deleted(&self, id: &str) -> Result<()> {
+        let username = format!("Deleted User {}", id);
+        self.revolt
+            .collection("users")
+            .update_one(
+                doc! {
+                    "_id": id
+                },
+                doc! {
+                    "$set": {
+                        "username": &username,
+                        "flags": 2
+                    },
+                    "$unset": {
+                        "avatar": 1,
+                        "status": 1,
+                        "profile": 1
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                with: "user",
+                operation: "update_one",
+            })?;
+        Ok(())
+    }
+
+    async fn update_username(&self, id: &str, new_username: &str) -> Result<()> {
+        self.revolt
+            .collection("users")
+            .update_one(
+                doc! { "_id": id },
+                doc! {
+                    "$set": {
+                        "username": new_username
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "user",
+            })?;
+        Ok(())
+    }
 }
