@@ -326,7 +326,11 @@ impl Queries for MongoDB {
         Ok(())
     }
 
-    async fn make_user_blocked(&self, origin_id: &str, target_id: &str) -> Result<()> {
+    async fn make_user_already_in_relations_blocked(
+        &self,
+        origin_id: &str,
+        target_id: &str,
+    ) -> Result<()> {
         self.revolt
             .collection("users")
             .update_one(
@@ -337,6 +341,91 @@ impl Queries for MongoDB {
                 doc! {
                     "$set": {
                         "relations.$.status": "Blocked"
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "user",
+            })?;
+        Ok(())
+    }
+
+    async fn make_user_already_in_relations_blocked_by(
+        &self,
+        target_id: &str,
+        origin_id: &str,
+    ) -> Result<()> {
+        self.revolt
+            .collection("users")
+            .update_one(
+                doc! {
+                    "_id": target_id,
+                    "relations._id": origin_id
+                },
+                doc! {
+                    "$set": {
+                        "relations.$.status": "BlockedOther"
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "user",
+            })?;
+        Ok(())
+    }
+
+    async fn make_user_not_in_relations_blocked(
+        &self,
+        origin_id: &str,
+        target_id: &str,
+    ) -> Result<()> {
+        self.revolt
+            .collection("users")
+            .update_one(
+                doc! {
+                    "_id": origin_id
+                },
+                doc! {
+                    "$push": {
+                        "relations": {
+                            "_id": target_id,
+                            "status": "Blocked"
+                        }
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "user",
+            })?;
+        Ok(())
+    }
+
+    async fn make_user_not_in_relations_blocked_by(
+        &self,
+        target_id: &str,
+        origin_id: &str,
+    ) -> Result<()> {
+        self.revolt
+            .collection("users")
+            .update_one(
+                doc! {
+                    "_id": target_id
+                },
+                doc! {
+                    "$push": {
+                        "relations": {
+                            "_id": origin_id,
+                            "status": "BlockedOther"
+                        }
                     }
                 },
                 None,

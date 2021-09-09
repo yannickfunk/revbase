@@ -78,7 +78,35 @@ impl Queries for Mockup {
         todo!()
     }
 
-    async fn make_user_blocked(&self, origin_id: &str, target_id: &str) -> Result<()> {
+    async fn make_user_already_in_relations_blocked(
+        &self,
+        origin_id: &str,
+        target_id: &str,
+    ) -> Result<()> {
+        todo!()
+    }
+
+    async fn make_user_already_in_relations_blocked_by(
+        &self,
+        target_id: &str,
+        origin_id: &str,
+    ) -> Result<()> {
+        todo!()
+    }
+
+    async fn make_user_not_in_relations_blocked(
+        &self,
+        origin_id: &str,
+        target_id: &str,
+    ) -> Result<()> {
+        todo!()
+    }
+
+    async fn make_user_not_in_relations_blocked_by(
+        &self,
+        target_id: &str,
+        origin_id: &str,
+    ) -> Result<()> {
         todo!()
     }
 }
