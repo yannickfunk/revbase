@@ -1,4 +1,4 @@
-use crate::entities::{Bot, User};
+use crate::entities::{BannedUser, Bot, User};
 use crate::util::result::Result;
 use crate::Queries;
 use rocket::async_trait;
@@ -39,6 +39,10 @@ impl Queries for Mockup {
     }
 
     async fn get_users(&self, user_ids: Vec<&str>) -> Result<Vec<User>> {
+        todo!()
+    }
+
+    async fn get_users_as_banned_users(&self, user_ids: Vec<&str>) -> Result<Vec<BannedUser>> {
         todo!()
     }
 

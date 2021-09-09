@@ -23,6 +23,13 @@ use crate::util::variables::EARLY_ADOPTER_BADGE;
 
  */
 
+#[derive(Serialize, Deserialize)]
+pub struct BannedUser {
+    _id: String,
+    username: String,
+    avatar: Option<File>,
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub enum RelationshipStatus {
     None,

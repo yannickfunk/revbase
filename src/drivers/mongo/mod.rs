@@ -1,5 +1,5 @@
 mod migrations;
-use crate::entities::{Bot, User};
+use crate::entities::{BannedUser, Bot, User};
 use crate::util::result::*;
 use crate::Queries;
 use migrations::{init, scripts};
@@ -123,6 +123,40 @@ impl Queries for MongoDB {
                     with: "user",
                 })?;
                 users.push(user);
+            }
+        }
+        Ok(users)
+    }
+
+    async fn get_users_as_banned_users(&self, user_ids: Vec<&str>) -> Result<Vec<BannedUser>> {
+        let mut cursor = self
+            .revolt
+            .collection("users")
+            .find(
+                doc! {
+                    "_id": {
+                        "$in": user_ids
+                    }
+                },
+                FindOptions::builder()
+                    .projection(doc! {
+                        "username": 1,
+                        "avatar": 1
+                    })
+                    .build(),
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find",
+                with: "users",
+            })?;
+
+        let mut users = vec![];
+        while let Some(result) = cursor.next().await {
+            if let Ok(doc) = result {
+                if let Ok(user) = from_document::<BannedUser>(doc) {
+                    users.push(user);
+                }
             }
         }
         Ok(users)
