@@ -1,9 +1,12 @@
 #![feature(async_closure)]
 
+extern crate mongodb;
+
 use crate::entities::{BannedUser, Bot, User};
 use crate::util::result::Result;
 use drivers::{mockup::Mockup, mongo::MongoDB};
 use enum_dispatch::enum_dispatch;
+use mongodb::bson::Document;
 use rocket::async_trait;
 
 pub mod drivers;
@@ -46,6 +49,8 @@ pub trait Queries {
         target_id: &str,
         origin_id: &str,
     ) -> Result<()>;
+    async fn apply_profile_changes(&self, id: &str, change_doc: Document) -> Result<()>;
+    async fn remove_user_from_relations(&self, id: &str, target_id: &str) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -161,6 +166,14 @@ impl Queries for Database {
         self.driver
             .make_user_not_in_relations_blocked_by(target_id, origin_id)
             .await
+    }
+
+    async fn apply_profile_changes(&self, id: &str, change_doc: Document) -> Result<()> {
+        self.driver.apply_profile_changes(id, change_doc).await
+    }
+
+    async fn remove_user_from_relations(&self, id: &str, target: &str) -> Result<()> {
+        self.driver.remove_user_from_relations(id, target).await
     }
 }
 

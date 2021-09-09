@@ -1,7 +1,9 @@
 use crate::entities::{BannedUser, Bot, User};
 use crate::util::result::Result;
 use crate::Queries;
+use mongodb::bson::Document;
 use rocket::async_trait;
+
 pub struct Mockup {}
 
 #[async_trait]
@@ -107,6 +109,14 @@ impl Queries for Mockup {
         target_id: &str,
         origin_id: &str,
     ) -> Result<()> {
+        todo!()
+    }
+
+    async fn apply_profile_changes(&self, id: &str, change_doc: Document) -> Result<()> {
+        todo!()
+    }
+
+    async fn remove_user_from_relations(&self, id: &str, target: &str) -> Result<()> {
         todo!()
     }
 }

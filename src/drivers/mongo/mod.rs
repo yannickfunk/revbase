@@ -437,4 +437,40 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn apply_profile_changes(&self, id: &str, change_doc: Document) -> Result<()> {
+        self.revolt
+            .collection("users")
+            .update_one(doc! { "_id": id }, change_doc, None)
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "user",
+            })?;
+        Ok(())
+    }
+
+    async fn remove_user_from_relations(&self, id: &str, target: &str) -> Result<()> {
+        self.revolt
+            .collection("users")
+            .update_one(
+                doc! {
+                    "_id": id
+                },
+                doc! {
+                    "$pull": {
+                        "relations": {
+                            "_id": target
+                        }
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "user",
+            })?;
+        Ok(())
+    }
 }
