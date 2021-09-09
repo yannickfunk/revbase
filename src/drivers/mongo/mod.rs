@@ -277,7 +277,7 @@ impl Queries for MongoDB {
         Ok(())
     }
 
-    async fn make_bot_user_deleted(&self, id: &str) -> Result<()> {
+    async fn delete_user(&self, id: &str) -> Result<()> {
         let username = format!("Deleted User {}", id);
         self.revolt
             .collection("users")

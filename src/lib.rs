@@ -27,7 +27,7 @@ pub trait Queries {
         -> Result<Vec<String>>;
     async fn add_user(&self, id: &str, username: &str) -> Result<()>;
     async fn add_bot_user(&self, id: &str, username: &str, owner_id: &str) -> Result<()>;
-    async fn make_bot_user_deleted(&self, id: &str) -> Result<()>;
+    async fn delete_user(&self, id: &str) -> Result<()>;
     async fn update_username(&self, id: &str, new_username: &str) -> Result<()>;
     async fn make_user_already_in_relations_blocked(
         &self,
@@ -64,15 +64,16 @@ pub struct Database {
 }
 
 impl Database {
-    pub fn new_from_mongo(driver: MongoDB) -> Self {
+    pub async fn new_from_mongo(mongo_uri: &str) -> Self {
         Self {
-            driver: Driver::from(driver),
+            driver: Driver::from(MongoDB::new(mongo_uri).await),
         }
     }
 
-    pub fn new_from_mockup(driver: Mockup) -> Self {
+    pub fn new_from_mockup() -> Self {
+        let mockup = Mockup {};
         Self {
-            driver: Driver::from(driver),
+            driver: Driver::from(mockup),
         }
     }
 }
@@ -121,8 +122,8 @@ impl Queries for Database {
         self.driver.add_bot_user(id, username, owner_id).await
     }
 
-    async fn make_bot_user_deleted(&self, id: &str) -> Result<()> {
-        self.driver.make_bot_user_deleted(id).await
+    async fn delete_user(&self, id: &str) -> Result<()> {
+        self.driver.delete_user(id).await
     }
 
     async fn update_username(&self, id: &str, new_username: &str) -> Result<()> {
@@ -187,8 +188,7 @@ mod tests {
     fn it_works() {
         env_logger::init_from_env(env_logger::Env::default().filter_or("RUST_LOG", "info"));
         let user = async_std::task::block_on(async {
-            let driver = MongoDB::new("").await;
-            let db = Database::new_from_mongo(driver);
+            let db = Database::new_from_mongo("").await;
             let mutual_friends = db
                 .get_mutual_friends_ids("01FDX1NCVAKFPVSXNNVEVMQHAF", "01FDX1DHBVS9NF6KSQECFVRFGB")
                 .await

@@ -72,7 +72,7 @@ impl Queries for Mockup {
         todo!()
     }
 
-    async fn make_bot_user_deleted(&self, id: &str) -> Result<()> {
+    async fn delete_user(&self, id: &str) -> Result<()> {
         todo!()
     }
 
