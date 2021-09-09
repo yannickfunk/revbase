@@ -325,4 +325,27 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn make_user_blocked(&self, origin_id: &str, target_id: &str) -> Result<()> {
+        self.revolt
+            .collection("users")
+            .update_one(
+                doc! {
+                    "_id": origin_id,
+                    "relations._id": target_id
+                },
+                doc! {
+                    "$set": {
+                        "relations.$.status": "Blocked"
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "user",
+            })?;
+        Ok(())
+    }
 }

@@ -26,6 +26,7 @@ pub trait Queries {
     async fn add_bot_user(&self, id: &str, username: &str, owner_id: &str) -> Result<()>;
     async fn make_bot_user_deleted(&self, id: &str) -> Result<()>;
     async fn update_username(&self, id: &str, new_username: &str) -> Result<()>;
+    async fn make_user_blocked(&self, origin_id: &str, target_id: &str) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -102,6 +103,10 @@ impl Queries for Database {
 
     async fn update_username(&self, id: &str, new_username: &str) -> Result<()> {
         self.driver.update_username(id, new_username).await
+    }
+
+    async fn make_user_blocked(&self, origin_id: &str, target_id: &str) -> Result<()> {
+        self.driver.make_user_blocked(origin_id, target_id).await
     }
 }
 

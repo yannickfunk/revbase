@@ -77,4 +77,8 @@ impl Queries for Mockup {
     async fn update_username(&self, id: &str, new_username: &str) -> Result<()> {
         todo!()
     }
+
+    async fn make_user_blocked(&self, origin_id: &str, target_id: &str) -> Result<()> {
+        todo!()
+    }
 }
