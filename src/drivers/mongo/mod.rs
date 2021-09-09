@@ -1,10 +1,10 @@
 mod migrations;
-use crate::entities::User;
+use crate::entities::{Bot, User};
 use crate::util::result::*;
-use crate::Queries as DatabaseTrait;
+use crate::Queries;
 use migrations::{init, scripts};
 use mongodb::{
-    bson::{doc, from_document},
+    bson::{doc, from_document, Document},
     error::Result as MongoResult,
     options::{Collation, FindOneOptions, FindOptions},
     Client, Collection, Database,
@@ -49,7 +49,7 @@ impl MongoDB {
 }
 
 #[async_trait]
-impl DatabaseTrait for MongoDB {
+impl Queries for MongoDB {
     async fn get_user_by_id(&self, id: &str) -> Result<User> {
         if let Some(doc) = self
             .revolt
@@ -126,5 +126,51 @@ impl DatabaseTrait for MongoDB {
             }
         }
         Ok(users)
+    }
+
+    async fn get_bot_users_owned_by_user_id(&self, id: &str) -> Result<Vec<User>> {
+        Ok(self
+            .revolt
+            .collection("users")
+            .find(
+                doc! {
+                    "bot.owner": id
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                with: "users",
+                operation: "find",
+            })?
+            .filter_map(async move |s| s.ok())
+            .collect::<Vec<Document>>()
+            .await
+            .into_iter()
+            .filter_map(|x| from_document(x).ok())
+            .collect::<Vec<User>>())
+    }
+
+    async fn get_bots_owned_by_user_id(&self, id: &str) -> Result<Vec<Bot>> {
+        Ok(self
+            .revolt
+            .collection("bots")
+            .find(
+                doc! {
+                    "owner": id
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                with: "bots",
+                operation: "find",
+            })?
+            .filter_map(async move |s| s.ok())
+            .collect::<Vec<Document>>()
+            .await
+            .into_iter()
+            .filter_map(|x| from_document(x).ok())
+            .collect::<Vec<Bot>>())
     }
 }

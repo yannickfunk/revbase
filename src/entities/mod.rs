@@ -6,10 +6,10 @@ mod server;
 mod sync;
 
  */
+mod bots;
 mod microservice;
 mod user;
 /*
-mod bots;
 
 use microservice::*;
 
@@ -22,5 +22,5 @@ pub use server::*;
 pub use sync::*;
 
  */
+pub use bots::*;
 pub use user::*;
-// pub use bots::*;

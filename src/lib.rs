@@ -1,4 +1,6 @@
-use crate::entities::User;
+#![feature(async_closure)]
+
+use crate::entities::{Bot, User};
 use crate::util::result::Result;
 use drivers::{mockup::Mockup, mongo::MongoDB};
 use enum_dispatch::enum_dispatch;
@@ -15,6 +17,8 @@ pub trait Queries {
     async fn get_user_by_id(&self, id: &str) -> Result<User>;
     async fn get_user_by_username(&self, username: &str) -> Result<User>;
     async fn get_users(&self, user_ids: Vec<&str>) -> Result<Vec<User>>;
+    async fn get_bot_users_owned_by_user_id(&self, id: &str) -> Result<Vec<User>>;
+    async fn get_bots_owned_by_user_id(&self, id: &str) -> Result<Vec<Bot>>;
 }
 
 #[enum_dispatch(Queries)]
@@ -53,6 +57,14 @@ impl Queries for Database {
 
     async fn get_users(&self, user_ids: Vec<&str>) -> Result<Vec<User>> {
         self.driver.get_users(user_ids).await
+    }
+
+    async fn get_bot_users_owned_by_user_id(&self, id: &str) -> Result<Vec<User>> {
+        self.driver.get_bot_users_owned_by_user_id(id).await
+    }
+
+    async fn get_bots_owned_by_user_id(&self, id: &str) -> Result<Vec<Bot>> {
+        self.driver.get_bots_owned_by_user_id(id).await
     }
 }
 
