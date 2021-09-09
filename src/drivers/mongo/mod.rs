@@ -1,10 +1,10 @@
 mod migrations;
-use crate::entities::{BannedUser, Bot, User};
+use crate::entities::{BannedUser, Bot, Subscription, User};
 use crate::util::result::*;
 use crate::Queries;
 use migrations::{init, scripts};
 use mongodb::{
-    bson::{doc, from_document, Document},
+    bson::{doc, from_document, to_document, Document},
     error::Result as MongoResult,
     options::{Collation, FindOneOptions, FindOptions},
     Client, Collection, Database,
@@ -13,6 +13,7 @@ use mongodb::{
 use futures::{StreamExt, TryStreamExt};
 use rocket::async_trait;
 use rocket::http::ext::IntoCollection;
+use web_push::SubscriptionInfo;
 
 pub struct MongoDB {
     connection: Client,
@@ -470,6 +471,101 @@ impl Queries for MongoDB {
             .map_err(|_| Error::DatabaseError {
                 operation: "update_one",
                 with: "user",
+            })?;
+        Ok(())
+    }
+
+    async fn get_accounts_subscriptions(
+        &self,
+        target_ids: Vec<&str>,
+    ) -> Option<Vec<SubscriptionInfo>> {
+        if let Ok(mut cursor) = self
+            .revolt
+            .collection("accounts")
+            .find(
+                doc! {
+                    "_id": {
+                        "$in": target_ids
+                    },
+                    "sessions.subscription": {
+                        "$exists": true
+                    }
+                },
+                FindOptions::builder()
+                    .projection(doc! { "sessions": 1 })
+                    .build(),
+            )
+            .await
+        {
+            let mut subscriptions = vec![];
+            while let Some(result) = cursor.next().await {
+                if let Ok(doc) = result {
+                    if let Ok(sessions) = doc.get_array("sessions") {
+                        for session in sessions {
+                            if let Some(doc) = session.as_document() {
+                                if let Ok(sub) = doc.get_document("subscription") {
+                                    let endpoint = sub.get_str("endpoint").unwrap().to_string();
+                                    let p256dh = sub.get_str("p256dh").unwrap().to_string();
+                                    let auth = sub.get_str("auth").unwrap().to_string();
+
+                                    subscriptions
+                                        .push(SubscriptionInfo::new(endpoint, p256dh, auth));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Some(subscriptions)
+        } else {
+            None
+        }
+    }
+
+    async fn subscribe(
+        &self,
+        account_id: &str,
+        session_id: &str,
+        subscription: Subscription,
+    ) -> Result<()> {
+        self.revolt.collection("accounts")
+            .update_one(
+                doc! {
+                "_id": account_id,
+                "sessions.id": session_id
+            },
+                doc! {
+                "$set": {
+                    "sessions.$.subscription": to_document(&subscription)
+                        .map_err(|_| Error::DatabaseError { operation: "to_document", with: "subscription" })?
+                }
+            },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError { operation: "update_one", with: "account" })?;
+        Ok(())
+    }
+
+    async fn unsubscribe(&self, account_id: &str, session_id: &str) -> Result<()> {
+        self.revolt
+            .collection("accounts")
+            .update_one(
+                doc! {
+                    "_id": account_id,
+                    "sessions.id": session_id
+                },
+                doc! {
+                    "$unset": {
+                        "sessions.$.subscription": 1
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "to_document",
+                with: "subscription",
             })?;
         Ok(())
     }

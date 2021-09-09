@@ -1,8 +1,9 @@
-use crate::entities::{BannedUser, Bot, User};
+use crate::entities::{BannedUser, Bot, Subscription, User};
 use crate::util::result::Result;
 use crate::Queries;
 use mongodb::bson::Document;
 use rocket::async_trait;
+use web_push::SubscriptionInfo;
 
 pub struct Mockup {}
 
@@ -117,6 +118,26 @@ impl Queries for Mockup {
     }
 
     async fn remove_user_from_relations(&self, id: &str, target: &str) -> Result<()> {
+        todo!()
+    }
+
+    async fn get_accounts_subscriptions(
+        &self,
+        target_ids: Vec<&str>,
+    ) -> Option<Vec<SubscriptionInfo>> {
+        todo!()
+    }
+
+    async fn subscribe(
+        &self,
+        account_id: &str,
+        session_id: &str,
+        subscription: Subscription,
+    ) -> Result<()> {
+        todo!()
+    }
+
+    async fn unsubscribe(&self, account_id: &str, session_id: &str) -> Result<()> {
         todo!()
     }
 }

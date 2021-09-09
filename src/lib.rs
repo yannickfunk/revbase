@@ -2,12 +2,13 @@
 
 extern crate mongodb;
 
-use crate::entities::{BannedUser, Bot, User};
+use crate::entities::{BannedUser, Bot, Subscription, User};
 use crate::util::result::Result;
 use drivers::{mockup::Mockup, mongo::MongoDB};
 use enum_dispatch::enum_dispatch;
 use mongodb::bson::Document;
 use rocket::async_trait;
+use web_push::SubscriptionInfo;
 
 pub mod drivers;
 mod entities;
@@ -17,6 +18,7 @@ pub mod util;
 #[async_trait]
 #[enum_dispatch]
 pub trait Queries {
+    // user collection
     async fn get_user_by_id(&self, id: &str) -> Result<User>;
     async fn get_user_by_username(&self, username: &str) -> Result<User>;
     async fn get_users(&self, user_ids: Vec<&str>) -> Result<Vec<User>>;
@@ -51,6 +53,19 @@ pub trait Queries {
     ) -> Result<()>;
     async fn apply_profile_changes(&self, id: &str, change_doc: Document) -> Result<()>;
     async fn remove_user_from_relations(&self, id: &str, target_id: &str) -> Result<()>;
+
+    // accounts collection
+    async fn get_accounts_subscriptions(
+        &self,
+        target_ids: Vec<&str>,
+    ) -> Option<Vec<SubscriptionInfo>>;
+    async fn subscribe(
+        &self,
+        account_id: &str,
+        session_id: &str,
+        subscription: Subscription,
+    ) -> Result<()>;
+    async fn unsubscribe(&self, account_id: &str, session_id: &str) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -176,6 +191,28 @@ impl Queries for Database {
     async fn remove_user_from_relations(&self, id: &str, target: &str) -> Result<()> {
         self.driver.remove_user_from_relations(id, target).await
     }
+
+    async fn get_accounts_subscriptions(
+        &self,
+        target_ids: Vec<&str>,
+    ) -> Option<Vec<SubscriptionInfo>> {
+        self.driver.get_accounts_subscriptions(target_ids).await
+    }
+
+    async fn subscribe(
+        &self,
+        account_id: &str,
+        session_id: &str,
+        subscription: Subscription,
+    ) -> Result<()> {
+        self.driver
+            .subscribe(account_id, session_id, subscription)
+            .await
+    }
+
+    async fn unsubscribe(&self, account_id: &str, session_id: &str) -> Result<()> {
+        self.driver.unsubscribe(account_id, session_id).await
+    }
 }
 
 #[cfg(test)]
@@ -188,7 +225,7 @@ mod tests {
     fn it_works() {
         env_logger::init_from_env(env_logger::Env::default().filter_or("RUST_LOG", "info"));
         let user = async_std::task::block_on(async {
-            let db = Database::new_from_mongo("").await;
+            let db = Database::new_from_mongo("mongodb://test:test@localhost:27018/test?authSource=admin&readPreference=primary&ssl=false").await;
             let mutual_friends = db
                 .get_mutual_friends_ids("01FDX1NCVAKFPVSXNNVEVMQHAF", "01FDX1DHBVS9NF6KSQECFVRFGB")
                 .await

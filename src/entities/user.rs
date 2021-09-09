@@ -24,6 +24,13 @@ use crate::util::variables::EARLY_ADOPTER_BADGE;
  */
 
 #[derive(Serialize, Deserialize)]
+pub struct Subscription {
+    endpoint: String,
+    p256dh: String,
+    auth: String,
+}
+
+#[derive(Serialize, Deserialize)]
 pub struct BannedUser {
     _id: String,
     username: String,
