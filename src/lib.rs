@@ -66,6 +66,8 @@ pub trait Queries {
         subscription: Subscription,
     ) -> Result<()>;
     async fn unsubscribe(&self, account_id: &str, session_id: &str) -> Result<()>;
+
+    // other
 }
 
 #[enum_dispatch(Queries)]
