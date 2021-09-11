@@ -651,6 +651,30 @@ impl Queries for MongoDB {
             })
     }
 
+    async fn delete_attachments(&self, ids: Vec<&str>) -> Result<()> {
+        self.revolt
+            .collection("attachments")
+            .update_many(
+                doc! {
+                    "_id": {
+                        "$in": ids
+                    }
+                },
+                doc! {
+                    "$set": {
+                        "deleted": true
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "attachment",
+            })?;
+        Ok(())
+    }
+
     async fn delete_attachments_of_messages(&self, message_ids: Vec<&str>) -> Result<()> {
         self.revolt
             .collection("attachments")

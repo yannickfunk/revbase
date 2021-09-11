@@ -76,6 +76,7 @@ pub trait Queries {
         parent_id: &str,
     ) -> Result<()>;
     async fn delete_attachment(&self, id: &str) -> Result<()>;
+    async fn delete_attachments(&self, ids: Vec<&str>) -> Result<()>;
     async fn delete_attachments_of_messages(&self, message_ids: Vec<&str>) -> Result<()>;
 }
 
@@ -242,6 +243,10 @@ impl Queries for Database {
 
     async fn delete_attachment(&self, id: &str) -> Result<()> {
         self.driver.delete_attachment(id).await
+    }
+
+    async fn delete_attachments(&self, ids: Vec<&str>) -> Result<()> {
+        self.driver.delete_attachments(ids).await
     }
 
     async fn delete_attachments_of_messages(&self, message_ids: Vec<&str>) -> Result<()> {

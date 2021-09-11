@@ -158,6 +158,10 @@ impl Queries for Mockup {
         todo!()
     }
 
+    async fn delete_attachments(&self, ids: Vec<&str>) -> Result<()> {
+        todo!()
+    }
+
     async fn delete_attachments_of_messages(&self, message_ids: Vec<&str>) -> Result<()> {
         todo!()
     }
