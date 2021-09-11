@@ -1,5 +1,5 @@
 mod migrations;
-use crate::entities::{BannedUser, Bot, Subscription, User};
+use crate::entities::{BannedUser, Bot, File, Subscription, User};
 use crate::util::result::*;
 use crate::Queries;
 use migrations::{init, scripts};
@@ -566,6 +566,111 @@ impl Queries for MongoDB {
             .map_err(|_| Error::DatabaseError {
                 operation: "to_document",
                 with: "subscription",
+            })?;
+        Ok(())
+    }
+
+    async fn get_attachment(&self, id: &str, tag: &str, parent_type: &str) -> Result<File> {
+        let key = format!("{}_id", parent_type);
+        if let Some(doc) = self
+            .revolt
+            .collection("attachments")
+            .find_one(
+                doc! {
+                    "_id": id,
+                    "tag": tag,
+                    key.clone(): {
+                        "$exists": false
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find_one",
+                with: "attachment",
+            })?
+        {
+            let attachment = from_document::<File>(doc).map_err(|_| Error::DatabaseError {
+                operation: "from_document",
+                with: "attachment",
+            })?;
+            Ok(attachment)
+        } else {
+            Err(Error::UnknownAttachment)
+        }
+    }
+
+    async fn link_attachment_to_parent(
+        &self,
+        id: &str,
+        parent_type: &str,
+        parent_id: &str,
+    ) -> Result<()> {
+        let key = format!("{}_id", parent_type);
+        self.revolt
+            .collection("attachments")
+            .update_one(
+                doc! {
+                    "_id": id
+                },
+                doc! {
+                    "$set": {
+                        key: &parent_id
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "attachment",
+            })?;
+        Ok(())
+    }
+
+    async fn delete_attachment(&self, id: &str) -> Result<()> {
+        self.revolt
+            .collection("attachments")
+            .update_one(
+                doc! {
+                    "_id": id
+                },
+                doc! {
+                    "$set": {
+                        "deleted": true
+                    }
+                },
+                None,
+            )
+            .await
+            .map(|_| ())
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "attachment",
+            })
+    }
+
+    async fn delete_attachments_of_messages(&self, message_ids: Vec<&str>) -> Result<()> {
+        self.revolt
+            .collection("attachments")
+            .update_many(
+                doc! {
+                    "message_id": {
+                        "$in": message_ids
+                    }
+                },
+                doc! {
+                    "$set": {
+                        "deleted": true
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_many",
+                with: "attachments",
             })?;
         Ok(())
     }

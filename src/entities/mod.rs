@@ -7,6 +7,7 @@ mod sync;
 
  */
 mod bots;
+mod file;
 mod microservice;
 mod user;
 /*
@@ -23,4 +24,5 @@ pub use sync::*;
 
  */
 pub use bots::*;
+pub use file::*;
 pub use user::*;

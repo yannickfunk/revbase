@@ -2,7 +2,7 @@
 
 extern crate mongodb;
 
-use crate::entities::{BannedUser, Bot, Subscription, User};
+use crate::entities::{BannedUser, Bot, File, Subscription, User};
 use crate::util::result::Result;
 use drivers::{mockup::Mockup, mongo::MongoDB};
 use enum_dispatch::enum_dispatch;
@@ -67,7 +67,16 @@ pub trait Queries {
     ) -> Result<()>;
     async fn unsubscribe(&self, account_id: &str, session_id: &str) -> Result<()>;
 
-    // other
+    // attachments
+    async fn get_attachment(&self, id: &str, tag: &str, parent_type: &str) -> Result<File>;
+    async fn link_attachment_to_parent(
+        &self,
+        id: &str,
+        parent_type: &str,
+        parent_id: &str,
+    ) -> Result<()>;
+    async fn delete_attachment(&self, id: &str) -> Result<()>;
+    async fn delete_attachments_of_messages(&self, message_ids: Vec<&str>) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -214,6 +223,31 @@ impl Queries for Database {
 
     async fn unsubscribe(&self, account_id: &str, session_id: &str) -> Result<()> {
         self.driver.unsubscribe(account_id, session_id).await
+    }
+
+    async fn get_attachment(&self, id: &str, tag: &str, parent_type: &str) -> Result<File> {
+        self.driver.get_attachment(id, tag, parent_type).await
+    }
+
+    async fn link_attachment_to_parent(
+        &self,
+        id: &str,
+        parent_type: &str,
+        parent_id: &str,
+    ) -> Result<()> {
+        self.driver
+            .link_attachment_to_parent(id, parent_type, parent_id)
+            .await
+    }
+
+    async fn delete_attachment(&self, id: &str) -> Result<()> {
+        self.driver.delete_attachment(id).await
+    }
+
+    async fn delete_attachments_of_messages(&self, message_ids: Vec<&str>) -> Result<()> {
+        self.driver
+            .delete_attachments_of_messages(message_ids)
+            .await
     }
 }
 

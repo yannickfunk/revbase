@@ -1,4 +1,4 @@
-use crate::entities::{BannedUser, Bot, Subscription, User};
+use crate::entities::{BannedUser, Bot, File, Subscription, User};
 use crate::util::result::Result;
 use crate::Queries;
 use mongodb::bson::Document;
@@ -138,6 +138,27 @@ impl Queries for Mockup {
     }
 
     async fn unsubscribe(&self, account_id: &str, session_id: &str) -> Result<()> {
+        todo!()
+    }
+
+    async fn get_attachment(&self, id: &str, tag: &str, parent_type: &str) -> Result<File> {
+        todo!()
+    }
+
+    async fn link_attachment_to_parent(
+        &self,
+        id: &str,
+        parent_type: &str,
+        parent_id: &str,
+    ) -> Result<()> {
+        todo!()
+    }
+
+    async fn delete_attachment(&self, id: &str) -> Result<()> {
+        todo!()
+    }
+
+    async fn delete_attachments_of_messages(&self, message_ids: Vec<&str>) -> Result<()> {
         todo!()
     }
 }
