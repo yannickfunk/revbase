@@ -139,6 +139,11 @@ pub trait Queries {
         channel_id: &str,
         default_permissions: i32,
     ) -> Result<()>;
+    async fn delete_server_channels_role_permissions(
+        &self,
+        server_id: &str,
+        role_id: &str,
+    ) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -445,6 +450,16 @@ impl Queries for Database {
     ) -> Result<()> {
         self.driver
             .update_channel_default_permissions(channel_id, default_permissions)
+            .await
+    }
+
+    async fn delete_server_channels_role_permissions(
+        &self,
+        server_id: &str,
+        role_id: &str,
+    ) -> Result<()> {
+        self.driver
+            .delete_server_channels_role_permissions(server_id, role_id)
             .await
     }
 }

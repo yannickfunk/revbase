@@ -281,4 +281,12 @@ impl Queries for Mockup {
     ) -> Result<()> {
         todo!()
     }
+
+    async fn delete_server_channels_role_permissions(
+        &self,
+        server_id: &str,
+        role_id: &str,
+    ) -> Result<()> {
+        todo!()
+    }
 }

@@ -1147,4 +1147,30 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn delete_server_channels_role_permissions(
+        &self,
+        server_id: &str,
+        role_id: &str,
+    ) -> Result<()> {
+        self.revolt
+            .collection("channels")
+            .update_many(
+                doc! {
+                    "server": server_id
+                },
+                doc! {
+                    "$unset": {
+                        "role_permissions.".to_owned() + role_id: 1
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "channels",
+            })?;
+        Ok(())
+    }
 }
