@@ -1285,4 +1285,26 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn add_recipient_to_channel(&self, channel_id: &str, recipient_id: &str) -> Result<()> {
+        self.revolt
+            .collection("channels")
+            .update_one(
+                doc! {
+                    "_id": channel_id
+                },
+                doc! {
+                    "$push": {
+                        "recipients": recipient_id
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "channel",
+            })?;
+        Ok(())
+    }
 }

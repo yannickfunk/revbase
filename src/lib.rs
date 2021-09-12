@@ -149,6 +149,7 @@ pub trait Queries {
     async fn delete_all_channels_from_server(&self, server_id: &str) -> Result<()>;
     async fn add_channel(&self, channel: &Channel) -> Result<()>;
     async fn delete_channel(&self, id: &str) -> Result<()>;
+    async fn add_recipient_to_channel(&self, channel_id: &str, recipient_id: &str) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -486,6 +487,12 @@ impl Queries for Database {
 
     async fn delete_channel(&self, id: &str) -> Result<()> {
         self.driver.delete_channel(id).await
+    }
+
+    async fn add_recipient_to_channel(&self, channel_id: &str, recipient_id: &str) -> Result<()> {
+        self.driver
+            .add_recipient_to_channel(channel_id, recipient_id)
+            .await
     }
 }
 
