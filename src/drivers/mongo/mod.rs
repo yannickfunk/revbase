@@ -772,4 +772,16 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn apply_bot_changes(&self, id: &str, change_doc: Document) -> Result<()> {
+        self.revolt
+            .collection("bots")
+            .update_one(doc! { "_id": id }, change_doc, None)
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "bot",
+            })?;
+        Ok(())
+    }
 }

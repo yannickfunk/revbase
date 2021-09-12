@@ -181,4 +181,8 @@ impl Queries for Mockup {
     async fn delete_bot(&self, id: &str) -> Result<()> {
         todo!()
     }
+
+    async fn apply_bot_changes(&self, id: &str, change_doc: Document) -> Result<()> {
+        todo!()
+    }
 }
