@@ -85,6 +85,9 @@ pub trait Queries {
     async fn add_bot(&self, bot: &Bot) -> Result<()>;
     async fn delete_bot(&self, id: &str) -> Result<()>;
     async fn apply_bot_changes(&self, id: &str, change_doc: Document) -> Result<()>;
+
+    // channel_invites
+    async fn delete_invites_associated_to_channel(&self, id: &str) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -280,6 +283,10 @@ impl Queries for Database {
 
     async fn apply_bot_changes(&self, id: &str, change_doc: Document) -> Result<()> {
         self.driver.apply_bot_changes(id, change_doc).await
+    }
+
+    async fn delete_invites_associated_to_channel(&self, id: &str) -> Result<()> {
+        self.driver.delete_invites_associated_to_channel(id).await
     }
 }
 

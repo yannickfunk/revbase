@@ -784,4 +784,21 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn delete_invites_associated_to_channel(&self, id: &str) -> Result<()> {
+        self.revolt
+            .collection("channel_invites")
+            .delete_many(
+                doc! {
+                    "channel": id
+                },
+                None,
+            )
+            .await
+            .map(|_| ())
+            .map_err(|_| Error::DatabaseError {
+                operation: "delete_many",
+                with: "channel_invites",
+            })
+    }
 }

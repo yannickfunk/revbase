@@ -185,4 +185,8 @@ impl Queries for Mockup {
     async fn apply_bot_changes(&self, id: &str, change_doc: Document) -> Result<()> {
         todo!()
     }
+
+    async fn delete_invites_associated_to_channel(&self, id: &str) -> Result<()> {
+        todo!()
+    }
 }
