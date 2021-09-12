@@ -18,7 +18,7 @@ pub mod util;
 #[async_trait]
 #[enum_dispatch]
 pub trait Queries {
-    // user collection
+    // users
     async fn get_user_by_id(&self, id: &str) -> Result<User>;
     async fn get_user_by_username(&self, username: &str) -> Result<User>;
     async fn get_user_id_by_bot_token(&self, token: &str) -> Result<String>;
@@ -54,7 +54,7 @@ pub trait Queries {
     async fn apply_profile_changes(&self, id: &str, change_doc: Document) -> Result<()>;
     async fn remove_user_from_relations(&self, id: &str, target_id: &str) -> Result<()>;
 
-    // accounts collection
+    // accounts
     async fn get_accounts_subscriptions(
         &self,
         target_ids: Vec<&str>,
@@ -95,6 +95,12 @@ pub trait Queries {
 
     // channel_unreads
     async fn delete_channel_unreads(&self, channel_id: &str) -> Result<()>;
+    async fn add_mentions_to_channel_unreads(
+        &self,
+        channel_id: &str,
+        mentions: Vec<&str>,
+        message: &str,
+    ) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -314,6 +320,17 @@ impl Queries for Database {
 
     async fn delete_channel_unreads(&self, channel_id: &str) -> Result<()> {
         self.driver.delete_channel_unreads(channel_id).await
+    }
+
+    async fn add_mentions_to_channel_unreads(
+        &self,
+        channel_id: &str,
+        mentions: Vec<&str>,
+        message: &str,
+    ) -> Result<()> {
+        self.driver
+            .add_mentions_to_channel_unreads(channel_id, mentions, message)
+            .await
     }
 }
 

@@ -898,4 +898,34 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn add_mentions_to_channel_unreads(
+        &self,
+        channel_id: &str,
+        mentions: Vec<&str>,
+        message: &str,
+    ) -> Result<()> {
+        self.revolt
+            .collection("channel_unreads")
+            .update_many(
+                doc! {
+                    "_id.channel": channel_id,
+                    "_id.user": {
+                        "$in": mentions
+                    }
+                },
+                doc! {
+                    "$push": {
+                        "mentions": message
+                    }
+                },
+                UpdateOptions::builder().upsert(true).build(),
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_many",
+                with: "channel_unreads",
+            })?;
+        Ok(())
+    }
 }
