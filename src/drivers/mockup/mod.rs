@@ -197,4 +197,8 @@ impl Queries for Mockup {
     async fn add_invite(&self, invite: &Invite) -> Result<()> {
         todo!()
     }
+
+    async fn delete_invite(&self, id: &str) -> Result<()> {
+        todo!()
+    }
 }

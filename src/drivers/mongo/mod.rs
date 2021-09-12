@@ -837,4 +837,21 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn delete_invite(&self, id: &str) -> Result<()> {
+        self.revolt
+            .collection("channel_invites")
+            .delete_one(
+                doc! {
+                    "_id": id
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "delete_one",
+                with: "invite",
+            })?;
+        Ok(())
+    }
 }

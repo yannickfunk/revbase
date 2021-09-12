@@ -90,6 +90,7 @@ pub trait Queries {
     async fn delete_invites_associated_to_channel(&self, id: &str) -> Result<()>;
     async fn get_invite_by_id(&self, id: &str) -> Result<Invite>;
     async fn add_invite(&self, invite: &Invite) -> Result<()>;
+    async fn delete_invite(&self, id: &str) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -292,11 +293,15 @@ impl Queries for Database {
     }
 
     async fn get_invite_by_id(&self, id: &str) -> Result<Invite> {
-        self.get_invite_by_id(id).await
+        self.driver.get_invite_by_id(id).await
     }
 
     async fn add_invite(&self, invite: &Invite) -> Result<()> {
-        self.add_invite(invite).await
+        self.driver.add_invite(invite).await
+    }
+
+    async fn delete_invite(&self, id: &str) -> Result<()> {
+        self.driver.delete_invite(id).await
     }
 }
 
