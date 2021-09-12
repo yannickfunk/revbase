@@ -1111,7 +1111,31 @@ impl Queries for MongoDB {
                 doc! { "_id": channel_id },
                 doc! {
                     "$set": {
-                        "permissions": permissions as i32
+                        "permissions": permissions
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "channel",
+            })?;
+        Ok(())
+    }
+
+    async fn update_channel_default_permissions(
+        &self,
+        channel_id: &str,
+        default_permissions: i32,
+    ) -> Result<()> {
+        self.revolt
+            .collection("channels")
+            .update_one(
+                doc! { "_id": channel_id },
+                doc! {
+                    "$set": {
+                        "default_permissions": default_permissions
                     }
                 },
                 None,
