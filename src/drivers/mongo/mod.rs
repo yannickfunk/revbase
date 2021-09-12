@@ -1207,4 +1207,30 @@ impl Queries for MongoDB {
         }
         Ok(channels)
     }
+
+    async fn get_dm_channel(&self, user_a: &str, user_b: &str) -> Result<Option<Document>> {
+        let query = if user_a == user_b {
+            doc! {
+                "channel_type": "SavedMessages",
+                "user": user_a
+            }
+        } else {
+            doc! {
+                "channel_type": "DirectMessage",
+                "recipients": {
+                    "$all": [ user_a, user_b ]
+                }
+            }
+        };
+
+        Ok(self
+            .revolt
+            .collection("channels")
+            .find_one(query, None)
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find_one",
+                with: "channel",
+            })?)
+    }
 }

@@ -145,6 +145,7 @@ pub trait Queries {
         role_id: &str,
     ) -> Result<()>;
     async fn get_dm_channels_from_user(&self, user_id: &str) -> Result<Vec<Document>>;
+    async fn get_dm_channel(&self, user_a: &str, user_b: &str) -> Result<Option<Document>>;
 }
 
 #[enum_dispatch(Queries)]
@@ -466,6 +467,10 @@ impl Queries for Database {
 
     async fn get_dm_channels_from_user(&self, user_id: &str) -> Result<Vec<Document>> {
         self.driver.get_dm_channels_from_user(user_id).await
+    }
+
+    async fn get_dm_channel(&self, user_a: &str, user_b: &str) -> Result<Option<Document>> {
+        self.driver.get_dm_channel(user_a, user_b).await
     }
 }
 
