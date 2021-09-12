@@ -89,6 +89,7 @@ pub trait Queries {
     // channel_invites
     async fn delete_invites_associated_to_channel(&self, id: &str) -> Result<()>;
     async fn get_invite_by_id(&self, id: &str) -> Result<Invite>;
+    async fn add_invite(&self, invite: &Invite) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -292,6 +293,10 @@ impl Queries for Database {
 
     async fn get_invite_by_id(&self, id: &str) -> Result<Invite> {
         self.get_invite_by_id(id).await
+    }
+
+    async fn add_invite(&self, invite: &Invite) -> Result<()> {
+        self.add_invite(invite).await
     }
 }
 

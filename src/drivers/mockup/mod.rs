@@ -193,4 +193,8 @@ impl Queries for Mockup {
     async fn get_invite_by_id(&self, id: &str) -> Result<Invite> {
         todo!()
     }
+
+    async fn add_invite(&self, invite: &Invite) -> Result<()> {
+        todo!()
+    }
 }

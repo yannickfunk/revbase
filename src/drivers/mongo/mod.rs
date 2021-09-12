@@ -819,4 +819,22 @@ impl Queries for MongoDB {
             with: "invite",
         })
     }
+
+    async fn add_invite(&self, invite: &Invite) -> Result<()> {
+        self.revolt
+            .collection("channel_invites")
+            .insert_one(
+                to_document(invite).map_err(|_| Error::DatabaseError {
+                    operation: "to_bson",
+                    with: "invite",
+                })?,
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "insert_one",
+                with: "invite",
+            })?;
+        Ok(())
+    }
 }
