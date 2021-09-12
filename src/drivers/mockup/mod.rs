@@ -239,4 +239,13 @@ impl Queries for Mockup {
     async fn get_unreads_for_user(&self, user_id: &str) -> Result<Vec<Document>> {
         todo!()
     }
+
+    async fn update_last_message_in_channel_unreads(
+        &self,
+        channel_id: &str,
+        user_id: &str,
+        message_id: &str,
+    ) -> Result<()> {
+        todo!()
+    }
 }

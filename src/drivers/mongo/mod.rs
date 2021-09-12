@@ -1003,4 +1003,35 @@ impl Queries for MongoDB {
             .collect::<Vec<Document>>()
             .await)
     }
+
+    async fn update_last_message_in_channel_unreads(
+        &self,
+        channel_id: &str,
+        user_id: &str,
+        message_id: &str,
+    ) -> Result<()> {
+        self.revolt
+            .collection("channel_unreads")
+            .update_one(
+                doc! {
+                    "_id.channel": channel_id,
+                    "_id.user": user_id
+                },
+                doc! {
+                    "$unset": {
+                        "mentions": 1
+                    },
+                    "$set": {
+                        "last_id": message_id
+                    }
+                },
+                UpdateOptions::builder().upsert(true).build(),
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "channel_unreads",
+            })?;
+        Ok(())
+    }
 }
