@@ -106,6 +106,12 @@ pub trait Queries {
         mentions: Vec<&str>,
         message: &str,
     ) -> Result<()>;
+    async fn add_channels_to_unreads_for_user(
+        &self,
+        channel_ids: Vec<&str>,
+        user_id: &str,
+        current_time: &str,
+    ) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -345,6 +351,17 @@ impl Queries for Database {
     ) -> Result<()> {
         self.driver
             .add_mentions_to_channel_unreads(channel_id, mentions, message)
+            .await
+    }
+
+    async fn add_channels_to_unreads_for_user(
+        &self,
+        channel_ids: Vec<&str>,
+        user_id: &str,
+        current_time: &str,
+    ) -> Result<()> {
+        self.driver
+            .add_channels_to_unreads_for_user(channel_ids, user_id, current_time)
             .await
     }
 }

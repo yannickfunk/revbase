@@ -226,4 +226,13 @@ impl Queries for Mockup {
     ) -> Result<()> {
         todo!()
     }
+
+    async fn add_channels_to_unreads_for_user(
+        &self,
+        channel_ids: Vec<&str>,
+        user_id: &str,
+        current_time: &str,
+    ) -> Result<()> {
+        todo!()
+    }
 }

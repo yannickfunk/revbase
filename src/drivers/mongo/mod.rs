@@ -952,4 +952,35 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn add_channels_to_unreads_for_user(
+        &self,
+        channel_ids: Vec<&str>,
+        user_id: &str,
+        current_time: &str,
+    ) -> Result<()> {
+        self.revolt
+            .collection("channel_unreads")
+            .insert_many(
+                channel_ids
+                    .iter()
+                    .map(|channel| {
+                        doc! {
+                            "_id": {
+                                "channel": channel,
+                                "user": user_id
+                            },
+                            "last_id": current_time
+                        }
+                    })
+                    .collect::<Vec<Document>>(),
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_many",
+                with: "channel_unreads",
+            })
+            .map(|_| ())
+    }
 }
