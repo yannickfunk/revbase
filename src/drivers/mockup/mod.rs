@@ -305,4 +305,8 @@ impl Queries for Mockup {
     async fn add_channel(&self, channel: &Channel) -> Result<()> {
         todo!()
     }
+
+    async fn delete_channel(&self, id: &str) -> Result<()> {
+        todo!()
+    }
 }

@@ -1268,4 +1268,21 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn delete_channel(&self, id: &str) -> Result<()> {
+        self.revolt
+            .collection("channels")
+            .delete_one(
+                doc! {
+                    "_id": id
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "delete_one",
+                with: "channel",
+            })?;
+        Ok(())
+    }
 }
