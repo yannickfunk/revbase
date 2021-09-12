@@ -1052,4 +1052,30 @@ impl Queries for MongoDB {
             })?
             .is_some())
     }
+
+    async fn remove_recipient_from_channel(
+        &self,
+        channel_id: &str,
+        recipient_id: &str,
+    ) -> Result<()> {
+        self.revolt
+            .collection("channels")
+            .update_one(
+                doc! {
+                    "_id": channel_id
+                },
+                doc! {
+                    "$pull": {
+                        "recipients": recipient_id
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "channel",
+            })?;
+        Ok(())
+    }
 }

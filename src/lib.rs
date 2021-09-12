@@ -122,6 +122,11 @@ pub trait Queries {
 
     // channels
     async fn does_channel_exist_by_nonce(&self, nonce: &str) -> Result<bool>;
+    async fn remove_recipient_from_channel(
+        &self,
+        channel_id: &str,
+        recipient_id: &str,
+    ) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -392,6 +397,16 @@ impl Queries for Database {
 
     async fn does_channel_exist_by_nonce(&self, nonce: &str) -> Result<bool> {
         self.driver.does_channel_exist_by_nonce(nonce).await
+    }
+
+    async fn remove_recipient_from_channel(
+        &self,
+        channel_id: &str,
+        recipient_id: &str,
+    ) -> Result<()> {
+        self.driver
+            .remove_recipient_from_channel(channel_id, recipient_id)
+            .await
     }
 }
 

@@ -252,4 +252,12 @@ impl Queries for Mockup {
     async fn does_channel_exist_by_nonce(&self, nonce: &str) -> Result<bool> {
         todo!()
     }
+
+    async fn remove_recipient_from_channel(
+        &self,
+        channel_id: &str,
+        recipient_id: &str,
+    ) -> Result<()> {
+        todo!()
+    }
 }
