@@ -119,6 +119,9 @@ pub trait Queries {
         user_id: &str,
         message_id: &str,
     ) -> Result<()>;
+
+    // channels
+    async fn does_channel_exist_by_nonce(&self, nonce: &str) -> Result<bool>;
 }
 
 #[enum_dispatch(Queries)]
@@ -385,6 +388,10 @@ impl Queries for Database {
         self.driver
             .update_last_message_in_channel_unreads(channel_id, user_id, message_id)
             .await
+    }
+
+    async fn does_channel_exist_by_nonce(&self, nonce: &str) -> Result<bool> {
+        self.driver.does_channel_exist_by_nonce(nonce).await
     }
 }
 

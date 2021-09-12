@@ -1034,4 +1034,22 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn does_channel_exist_by_nonce(&self, nonce: &str) -> Result<bool> {
+        Ok(self
+            .revolt
+            .collection("channels")
+            .find_one(
+                doc! {
+                    "nonce": nonce
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find_one",
+                with: "channel",
+            })?
+            .is_some())
+    }
 }

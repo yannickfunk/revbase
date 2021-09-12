@@ -248,4 +248,8 @@ impl Queries for Mockup {
     ) -> Result<()> {
         todo!()
     }
+
+    async fn does_channel_exist_by_nonce(&self, nonce: &str) -> Result<bool> {
+        todo!()
+    }
 }
