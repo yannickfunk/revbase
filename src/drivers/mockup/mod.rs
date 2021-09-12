@@ -269,4 +269,8 @@ impl Queries for Mockup {
     ) -> Result<()> {
         todo!()
     }
+
+    async fn update_channel_permissions(&self, channel_id: &str, permissions: i32) -> Result<()> {
+        todo!()
+    }
 }

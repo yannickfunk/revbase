@@ -1103,4 +1103,24 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn update_channel_permissions(&self, channel_id: &str, permissions: i32) -> Result<()> {
+        self.revolt
+            .collection("channels")
+            .update_one(
+                doc! { "_id": channel_id },
+                doc! {
+                    "$set": {
+                        "permissions": permissions as i32
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "channel",
+            })?;
+        Ok(())
+    }
 }
