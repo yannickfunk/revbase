@@ -97,6 +97,47 @@ impl Queries for MongoDB {
         }
     }
 
+    async fn get_user_by_bot_token(&self, token: &str) -> Result<User> {
+        let maybe_bot_doc = self
+            .revolt
+            .collection("bots")
+            .find_one(
+                doc! {
+                    "token": token
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find_one",
+                with: "user",
+            })?;
+        if let Some(doc) = maybe_bot_doc {
+            let id = doc.get_str("_id").unwrap();
+            let maybe_user_doc = self
+                .revolt
+                .collection("users")
+                .find_one(
+                    doc! {
+                        "_id": &id
+                    },
+                    None,
+                )
+                .await
+                .map_err(|_| Error::DatabaseError {
+                    operation: "find_one",
+                    with: "user",
+                })?;
+            if let Some(doc) = maybe_user_doc {
+                Ok(from_document(doc).unwrap())
+            } else {
+                Err(Error::NotFound)
+            }
+        } else {
+            Err(Error::NotFound)
+        }
+    }
+
     async fn get_users(&self, user_ids: Vec<&str>) -> Result<Vec<User>> {
         let mut cursor = self.revolt.collection("users")
             .find(

@@ -41,6 +41,10 @@ impl Queries for Mockup {
         })
     }
 
+    async fn get_user_by_bot_token(&self, token: &str) -> Result<User> {
+        todo!()
+    }
+
     async fn get_users(&self, user_ids: Vec<&str>) -> Result<Vec<User>> {
         todo!()
     }
