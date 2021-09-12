@@ -881,4 +881,21 @@ impl Queries for MongoDB {
         }
         Ok(invites)
     }
+
+    async fn delete_channel_unreads(&self, channel_id: &str) -> Result<()> {
+        self.revolt
+            .collection("channel_unreads")
+            .delete_many(
+                doc! {
+                    "_id.channel": channel_id
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "delete_many",
+                with: "channel_unreads",
+            })?;
+        Ok(())
+    }
 }

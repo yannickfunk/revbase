@@ -92,6 +92,9 @@ pub trait Queries {
     async fn add_invite(&self, invite: &Invite) -> Result<()>;
     async fn delete_invite(&self, id: &str) -> Result<()>;
     async fn get_invites_of_server(&self, server_id: &str) -> Result<Vec<Invite>>;
+
+    // channel_unreads
+    async fn delete_channel_unreads(&self, channel_id: &str) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -307,6 +310,10 @@ impl Queries for Database {
 
     async fn get_invites_of_server(&self, server_id: &str) -> Result<Vec<Invite>> {
         self.driver.get_invites_of_server(server_id).await
+    }
+
+    async fn delete_channel_unreads(&self, channel_id: &str) -> Result<()> {
+        self.driver.delete_channel_unreads(channel_id).await
     }
 }
 

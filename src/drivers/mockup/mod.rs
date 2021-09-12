@@ -205,4 +205,8 @@ impl Queries for Mockup {
     async fn get_invites_of_server(&self, server_id: &str) -> Result<Vec<Invite>> {
         todo!()
     }
+
+    async fn delete_channel_unreads(&self, channel_id: &str) -> Result<()> {
+        todo!()
+    }
 }
