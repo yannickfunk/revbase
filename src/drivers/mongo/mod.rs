@@ -6,7 +6,7 @@ use migrations::{init, scripts};
 use mongodb::{
     bson::{doc, from_document, to_document, Document},
     error::Result as MongoResult,
-    options::{Collation, FindOneOptions, FindOptions},
+    options::{Collation, FindOneOptions, FindOptions, UpdateOptions},
     Client, Collection, Database,
 };
 
@@ -888,6 +888,30 @@ impl Queries for MongoDB {
             .delete_many(
                 doc! {
                     "_id.channel": channel_id
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "delete_many",
+                with: "channel_unreads",
+            })?;
+        Ok(())
+    }
+
+    async fn delete_multi_channel_unreads_for_user(
+        &self,
+        channel_ids: Vec<&str>,
+        user_id: &str,
+    ) -> Result<()> {
+        self.revolt
+            .collection("channel_unreads")
+            .delete_many(
+                doc! {
+                    "_id.channel": {
+                        "$in": channel_ids
+                    },
+                    "_id.user": user_id
                 },
                 None,
             )

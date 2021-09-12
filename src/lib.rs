@@ -95,6 +95,11 @@ pub trait Queries {
 
     // channel_unreads
     async fn delete_channel_unreads(&self, channel_id: &str) -> Result<()>;
+    async fn delete_multi_channel_unreads_for_user(
+        &self,
+        channel_ids: Vec<&str>,
+        user_id: &str,
+    ) -> Result<()>;
     async fn add_mentions_to_channel_unreads(
         &self,
         channel_id: &str,
@@ -320,6 +325,16 @@ impl Queries for Database {
 
     async fn delete_channel_unreads(&self, channel_id: &str) -> Result<()> {
         self.driver.delete_channel_unreads(channel_id).await
+    }
+
+    async fn delete_multi_channel_unreads_for_user(
+        &self,
+        channel_ids: Vec<&str>,
+        user_id: &str,
+    ) -> Result<()> {
+        self.driver
+            .delete_multi_channel_unreads_for_user(channel_ids, user_id)
+            .await
     }
 
     async fn add_mentions_to_channel_unreads(

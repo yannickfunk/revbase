@@ -210,6 +210,14 @@ impl Queries for Mockup {
         todo!()
     }
 
+    async fn delete_multi_channel_unreads_for_user(
+        &self,
+        channel_ids: Vec<&str>,
+        user_id: &str,
+    ) -> Result<()> {
+        todo!()
+    }
+
     async fn add_mentions_to_channel_unreads(
         &self,
         channel_id: &str,
