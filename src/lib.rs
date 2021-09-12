@@ -83,6 +83,7 @@ pub trait Queries {
     // bots
     async fn get_bot_count_owned_by_user(&self, user_id: &str) -> Result<u64>;
     async fn add_bot(&self, bot: &Bot) -> Result<()>;
+    async fn delete_bot(&self, id: &str) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -270,6 +271,10 @@ impl Queries for Database {
 
     async fn add_bot(&self, bot: &Bot) -> Result<()> {
         self.driver.add_bot(bot).await
+    }
+
+    async fn delete_bot(&self, id: &str) -> Result<()> {
+        self.delete_bot(id).await
     }
 }
 

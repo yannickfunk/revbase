@@ -177,4 +177,8 @@ impl Queries for Mockup {
     async fn add_bot(&self, bot: &Bot) -> Result<()> {
         todo!()
     }
+
+    async fn delete_bot(&self, id: &str) -> Result<()> {
+        todo!()
+    }
 }

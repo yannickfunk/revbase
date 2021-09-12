@@ -755,4 +755,21 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn delete_bot(&self, id: &str) -> Result<()> {
+        self.revolt
+            .collection("bots")
+            .delete_one(
+                doc! {
+                    "_id": id
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                with: "bot",
+                operation: "delete_one",
+            })?;
+        Ok(())
+    }
 }
