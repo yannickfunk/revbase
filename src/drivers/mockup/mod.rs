@@ -173,4 +173,8 @@ impl Queries for Mockup {
     async fn get_bot_count_owned_by_user(&self, user_id: &str) -> Result<u64> {
         todo!()
     }
+
+    async fn add_bot(&self, bot: &Bot) -> Result<()> {
+        todo!()
+    }
 }

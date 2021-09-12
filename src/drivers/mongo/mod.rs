@@ -737,4 +737,22 @@ impl Queries for MongoDB {
                 with: "bots",
             })? as u64)
     }
+
+    async fn add_bot(&self, bot: &Bot) -> Result<()> {
+        self.revolt
+            .collection("bots")
+            .insert_one(
+                to_document(bot).map_err(|_| Error::DatabaseError {
+                    with: "bot",
+                    operation: "to_document",
+                })?,
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "insert_one",
+                with: "user",
+            })?;
+        Ok(())
+    }
 }

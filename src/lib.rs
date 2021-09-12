@@ -82,6 +82,7 @@ pub trait Queries {
 
     // bots
     async fn get_bot_count_owned_by_user(&self, user_id: &str) -> Result<u64>;
+    async fn add_bot(&self, bot: &Bot) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -265,6 +266,10 @@ impl Queries for Database {
 
     async fn get_bot_count_owned_by_user(&self, user_id: &str) -> Result<u64> {
         self.driver.get_bot_count_owned_by_user(user_id).await
+    }
+
+    async fn add_bot(&self, bot: &Bot) -> Result<()> {
+        self.driver.add_bot(bot).await
     }
 }
 
