@@ -208,29 +208,6 @@ impl Queries for MongoDB {
             .collect::<Vec<User>>())
     }
 
-    async fn get_bots_owned_by_user_id(&self, id: &str) -> Result<Vec<Bot>> {
-        Ok(self
-            .revolt
-            .collection("bots")
-            .find(
-                doc! {
-                    "owner": id
-                },
-                None,
-            )
-            .await
-            .map_err(|_| Error::DatabaseError {
-                with: "bots",
-                operation: "find",
-            })?
-            .filter_map(async move |s| s.ok())
-            .collect::<Vec<Document>>()
-            .await
-            .into_iter()
-            .filter_map(|x| from_document(x).ok())
-            .collect::<Vec<Bot>>())
-    }
-
     async fn get_mutual_friends_ids(
         &self,
         user_id_a: &str,
@@ -736,6 +713,29 @@ impl Queries for MongoDB {
                 operation: "count_documents",
                 with: "bots",
             })? as u64)
+    }
+
+    async fn get_bots_owned_by_user_id(&self, id: &str) -> Result<Vec<Bot>> {
+        Ok(self
+            .revolt
+            .collection("bots")
+            .find(
+                doc! {
+                    "owner": id
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                with: "bots",
+                operation: "find",
+            })?
+            .filter_map(async move |s| s.ok())
+            .collect::<Vec<Document>>()
+            .await
+            .into_iter()
+            .filter_map(|x| from_document(x).ok())
+            .collect::<Vec<Bot>>())
     }
 
     async fn add_bot(&self, bot: &Bot) -> Result<()> {

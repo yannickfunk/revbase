@@ -57,10 +57,6 @@ impl Queries for Mockup {
         todo!()
     }
 
-    async fn get_bots_owned_by_user_id(&self, id: &str) -> Result<Vec<Bot>> {
-        todo!()
-    }
-
     async fn get_mutual_friends_ids(
         &self,
         user_id_a: &str,
@@ -171,6 +167,10 @@ impl Queries for Mockup {
     }
 
     async fn get_bot_count_owned_by_user(&self, user_id: &str) -> Result<u64> {
+        todo!()
+    }
+
+    async fn get_bots_owned_by_user_id(&self, id: &str) -> Result<Vec<Bot>> {
         todo!()
     }
 

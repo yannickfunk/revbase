@@ -25,7 +25,6 @@ pub trait Queries {
     async fn get_users(&self, user_ids: Vec<&str>) -> Result<Vec<User>>;
     async fn get_users_as_banned_users(&self, user_ids: Vec<&str>) -> Result<Vec<BannedUser>>;
     async fn get_bot_users_owned_by_user_id(&self, id: &str) -> Result<Vec<User>>;
-    async fn get_bots_owned_by_user_id(&self, id: &str) -> Result<Vec<Bot>>;
     async fn get_mutual_friends_ids(&self, user_id_a: &str, user_id_b: &str)
         -> Result<Vec<String>>;
     async fn add_user(&self, id: &str, username: &str) -> Result<()>;
@@ -82,6 +81,7 @@ pub trait Queries {
 
     // bots
     async fn get_bot_count_owned_by_user(&self, user_id: &str) -> Result<u64>;
+    async fn get_bots_owned_by_user_id(&self, id: &str) -> Result<Vec<Bot>>;
     async fn add_bot(&self, bot: &Bot) -> Result<()>;
     async fn delete_bot(&self, id: &str) -> Result<()>;
     async fn apply_bot_changes(&self, id: &str, change_doc: Document) -> Result<()>;
@@ -136,10 +136,6 @@ impl Queries for Database {
 
     async fn get_bot_users_owned_by_user_id(&self, id: &str) -> Result<Vec<User>> {
         self.driver.get_bot_users_owned_by_user_id(id).await
-    }
-
-    async fn get_bots_owned_by_user_id(&self, id: &str) -> Result<Vec<Bot>> {
-        self.driver.get_bots_owned_by_user_id(id).await
     }
 
     async fn get_mutual_friends_ids(
@@ -268,6 +264,10 @@ impl Queries for Database {
 
     async fn get_bot_count_owned_by_user(&self, user_id: &str) -> Result<u64> {
         self.driver.get_bot_count_owned_by_user(user_id).await
+    }
+
+    async fn get_bots_owned_by_user_id(&self, id: &str) -> Result<Vec<Bot>> {
+        self.driver.get_bots_owned_by_user_id(id).await
     }
 
     async fn add_bot(&self, bot: &Bot) -> Result<()> {
