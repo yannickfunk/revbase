@@ -1173,4 +1173,38 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn get_dm_channels_from_user(&self, user_id: &str) -> Result<Vec<Document>> {
+        let mut cursor = self
+            .revolt
+            .collection("channels")
+            .find(
+                doc! {
+                    "$or": [
+                        {
+                            "channel_type": "DirectMessage",
+                            "active": true
+                        },
+                        {
+                            "channel_type": "Group"
+                        }
+                    ],
+                    "recipients": user_id
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find",
+                with: "channels",
+            })?;
+
+        let mut channels = vec![];
+        while let Some(result) = cursor.next().await {
+            if let Ok(doc) = result {
+                channels.push(doc);
+            }
+        }
+        Ok(channels)
+    }
 }

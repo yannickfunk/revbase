@@ -144,6 +144,7 @@ pub trait Queries {
         server_id: &str,
         role_id: &str,
     ) -> Result<()>;
+    async fn get_dm_channels_from_user(&self, user_id: &str) -> Result<Vec<Document>>;
 }
 
 #[enum_dispatch(Queries)]
@@ -461,6 +462,10 @@ impl Queries for Database {
         self.driver
             .delete_server_channels_role_permissions(server_id, role_id)
             .await
+    }
+
+    async fn get_dm_channels_from_user(&self, user_id: &str) -> Result<Vec<Document>> {
+        self.driver.get_dm_channels_from_user(user_id).await
     }
 }
 

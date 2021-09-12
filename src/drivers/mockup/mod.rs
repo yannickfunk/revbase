@@ -289,4 +289,8 @@ impl Queries for Mockup {
     ) -> Result<()> {
         todo!()
     }
+
+    async fn get_dm_channels_from_user(&self, user_id: &str) -> Result<Vec<Document>> {
+        todo!()
+    }
 }
