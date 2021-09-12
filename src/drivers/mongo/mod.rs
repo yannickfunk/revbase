@@ -854,4 +854,31 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn get_invites_of_server(&self, server_id: &str) -> Result<Vec<Invite>> {
+        let mut cursor = self
+            .revolt
+            .collection("channel_invites")
+            .find(
+                doc! {
+                    "server": server_id
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find",
+                with: "channel_invites",
+            })?;
+
+        let mut invites = vec![];
+        while let Some(result) = cursor.next().await {
+            if let Ok(doc) = result {
+                if let Ok(invite) = from_document::<Invite>(doc) {
+                    invites.push(invite);
+                }
+            }
+        }
+        Ok(invites)
+    }
 }

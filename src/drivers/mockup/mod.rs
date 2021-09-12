@@ -201,4 +201,8 @@ impl Queries for Mockup {
     async fn delete_invite(&self, id: &str) -> Result<()> {
         todo!()
     }
+
+    async fn get_invites_of_server(&self, server_id: &str) -> Result<Vec<Invite>> {
+        todo!()
+    }
 }
