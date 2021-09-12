@@ -79,6 +79,9 @@ pub trait Queries {
     async fn delete_attachment(&self, id: &str) -> Result<()>;
     async fn delete_attachments(&self, ids: Vec<&str>) -> Result<()>;
     async fn delete_attachments_of_messages(&self, message_ids: Vec<&str>) -> Result<()>;
+
+    // bots
+    async fn get_bot_count_owned_by_user(&self, user_id: &str) -> Result<u64>;
 }
 
 #[enum_dispatch(Queries)]
@@ -258,6 +261,10 @@ impl Queries for Database {
         self.driver
             .delete_attachments_of_messages(message_ids)
             .await
+    }
+
+    async fn get_bot_count_owned_by_user(&self, user_id: &str) -> Result<u64> {
+        self.driver.get_bot_count_owned_by_user(user_id).await
     }
 }
 

@@ -720,4 +720,21 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn get_bot_count_owned_by_user(&self, user_id: &str) -> Result<u64> {
+        Ok(self
+            .revolt
+            .collection("bots")
+            .count_documents(
+                doc! {
+                    "owner": user_id
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "count_documents",
+                with: "bots",
+            })? as u64)
+    }
 }

@@ -169,4 +169,8 @@ impl Queries for Mockup {
     async fn delete_attachments_of_messages(&self, message_ids: Vec<&str>) -> Result<()> {
         todo!()
     }
+
+    async fn get_bot_count_owned_by_user(&self, user_id: &str) -> Result<u64> {
+        todo!()
+    }
 }
