@@ -1233,4 +1233,21 @@ impl Queries for MongoDB {
                 with: "channel",
             })?)
     }
+
+    async fn delete_all_channels_from_server(&self, server_id: &str) -> Result<()> {
+        self.revolt
+            .collection("channels")
+            .delete_many(
+                doc! {
+                    "server": server_id
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "delete_many",
+                with: "channels",
+            })?;
+        Ok(())
+    }
 }
