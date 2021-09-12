@@ -127,6 +127,12 @@ pub trait Queries {
         channel_id: &str,
         recipient_id: &str,
     ) -> Result<()>;
+    async fn update_channel_role_permissions(
+        &self,
+        channel_id: &str,
+        role: &str,
+        permissions: i32,
+    ) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -406,6 +412,17 @@ impl Queries for Database {
     ) -> Result<()> {
         self.driver
             .remove_recipient_from_channel(channel_id, recipient_id)
+            .await
+    }
+
+    async fn update_channel_role_permissions(
+        &self,
+        channel_id: &str,
+        role: &str,
+        permissions: i32,
+    ) -> Result<()> {
+        self.driver
+            .update_channel_role_permissions(channel_id, role, permissions)
             .await
     }
 }

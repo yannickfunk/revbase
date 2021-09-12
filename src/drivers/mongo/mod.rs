@@ -1078,4 +1078,29 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn update_channel_role_permissions(
+        &self,
+        channel_id: &str,
+        role: &str,
+        permissions: i32,
+    ) -> Result<()> {
+        self.revolt
+            .collection("channels")
+            .update_one(
+                doc! { "_id": channel_id },
+                doc! {
+                    "$set": {
+                        "role_permissions.".to_owned() + role: permissions
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "channel",
+            })?;
+        Ok(())
+    }
 }
