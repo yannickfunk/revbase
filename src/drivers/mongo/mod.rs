@@ -97,7 +97,7 @@ impl Queries for MongoDB {
         }
     }
 
-    async fn get_user_by_bot_token(&self, token: &str) -> Result<User> {
+    async fn get_user_id_by_bot_token(&self, token: &str) -> Result<&str> {
         let maybe_bot_doc = self
             .revolt
             .collection("bots")
@@ -113,26 +113,7 @@ impl Queries for MongoDB {
                 with: "user",
             })?;
         if let Some(doc) = maybe_bot_doc {
-            let id = doc.get_str("_id").unwrap();
-            let maybe_user_doc = self
-                .revolt
-                .collection("users")
-                .find_one(
-                    doc! {
-                        "_id": &id
-                    },
-                    None,
-                )
-                .await
-                .map_err(|_| Error::DatabaseError {
-                    operation: "find_one",
-                    with: "user",
-                })?;
-            if let Some(doc) = maybe_user_doc {
-                Ok(from_document(doc).unwrap())
-            } else {
-                Err(Error::NotFound)
-            }
+            Ok(doc.get_str("_id").unwrap())
         } else {
             Err(Error::NotFound)
         }
