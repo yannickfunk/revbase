@@ -41,7 +41,7 @@ impl Queries for Mockup {
         })
     }
 
-    async fn get_user_id_by_bot_token(&self, token: &str) -> Result<&str> {
+    async fn get_user_id_by_bot_token(&self, token: &str) -> Result<String> {
         todo!()
     }
 

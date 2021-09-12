@@ -97,7 +97,7 @@ impl Queries for MongoDB {
         }
     }
 
-    async fn get_user_id_by_bot_token(&self, token: &str) -> Result<&str> {
+    async fn get_user_id_by_bot_token(&self, token: &str) -> Result<String> {
         let maybe_bot_doc = self
             .revolt
             .collection("bots")
@@ -113,7 +113,7 @@ impl Queries for MongoDB {
                 with: "user",
             })?;
         if let Some(doc) = maybe_bot_doc {
-            Ok(doc.get_str("_id").unwrap())
+            Ok(doc.get_str("_id").unwrap().to_string())
         } else {
             Err(Error::NotFound)
         }
