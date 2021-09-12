@@ -1,5 +1,5 @@
 mod migrations;
-use crate::entities::{BannedUser, Bot, File, Invite, Subscription, User};
+use crate::entities::{BannedUser, Bot, Channel, File, Invite, Subscription, User};
 use crate::util::result::*;
 use crate::Queries;
 use migrations::{init, scripts};
@@ -1247,6 +1247,24 @@ impl Queries for MongoDB {
             .map_err(|_| Error::DatabaseError {
                 operation: "delete_many",
                 with: "channels",
+            })?;
+        Ok(())
+    }
+
+    async fn add_channel(&self, channel: &Channel) -> Result<()> {
+        self.revolt
+            .collection("channels")
+            .insert_one(
+                to_document(channel).map_err(|_| Error::DatabaseError {
+                    operation: "to_bson",
+                    with: "channel",
+                })?,
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "insert_one",
+                with: "channel",
             })?;
         Ok(())
     }

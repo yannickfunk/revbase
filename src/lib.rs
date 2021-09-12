@@ -2,7 +2,7 @@
 
 extern crate mongodb;
 
-use crate::entities::{BannedUser, Bot, File, Invite, Subscription, User};
+use crate::entities::{BannedUser, Bot, Channel, File, Invite, Subscription, User};
 use crate::util::result::Result;
 use drivers::{mockup::Mockup, mongo::MongoDB};
 use enum_dispatch::enum_dispatch;
@@ -147,6 +147,7 @@ pub trait Queries {
     async fn get_dm_channels_from_user(&self, user_id: &str) -> Result<Vec<Document>>;
     async fn get_dm_channel(&self, user_a: &str, user_b: &str) -> Result<Option<Document>>;
     async fn delete_all_channels_from_server(&self, server_id: &str) -> Result<()>;
+    async fn add_channel(&self, channel: &Channel) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -476,6 +477,10 @@ impl Queries for Database {
 
     async fn delete_all_channels_from_server(&self, server_id: &str) -> Result<()> {
         self.driver.delete_all_channels_from_server(server_id).await
+    }
+
+    async fn add_channel(&self, channel: &Channel) -> Result<()> {
+        self.driver.add_channel(channel).await
     }
 }
 
