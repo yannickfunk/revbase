@@ -1,5 +1,5 @@
 mod migrations;
-use crate::entities::{BannedUser, Bot, File, Subscription, User};
+use crate::entities::{BannedUser, Bot, File, Invite, Subscription, User};
 use crate::util::result::*;
 use crate::Queries;
 use migrations::{init, scripts};
@@ -800,5 +800,23 @@ impl Queries for MongoDB {
                 operation: "delete_many",
                 with: "channel_invites",
             })
+    }
+
+    async fn get_invite_by_id(&self, id: &str) -> Result<Invite> {
+        let doc = self
+            .revolt
+            .collection("channel_invites")
+            .find_one(doc! { "_id": id }, None)
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find_one",
+                with: "invite",
+            })?
+            .ok_or_else(|| Error::UnknownServer)?;
+
+        from_document::<Invite>(doc).map_err(|_| Error::DatabaseError {
+            operation: "from_document",
+            with: "invite",
+        })
     }
 }

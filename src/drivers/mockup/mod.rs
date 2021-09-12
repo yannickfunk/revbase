@@ -1,4 +1,4 @@
-use crate::entities::{BannedUser, Bot, File, Subscription, User};
+use crate::entities::{BannedUser, Bot, File, Invite, Subscription, User};
 use crate::util::result::Result;
 use crate::Queries;
 use mongodb::bson::Document;
@@ -187,6 +187,10 @@ impl Queries for Mockup {
     }
 
     async fn delete_invites_associated_to_channel(&self, id: &str) -> Result<()> {
+        todo!()
+    }
+
+    async fn get_invite_by_id(&self, id: &str) -> Result<Invite> {
         todo!()
     }
 }

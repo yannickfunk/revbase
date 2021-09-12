@@ -3,9 +3,11 @@ use mongodb::bson::from_document;
 use mongodb::bson::to_document;
 use serde::{Deserialize, Serialize};
 
+/*
 use crate::database::get_collection;
 use crate::util::result::Error;
 use crate::util::result::Result;
+*/
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "type")]
@@ -28,6 +30,7 @@ pub enum Invite {
        } */
 }
 
+/*
 impl Invite {
     pub fn code(&self) -> &String {
         match &self {
@@ -94,3 +97,4 @@ impl Invite {
         Ok(())
     }
 }
+*/
