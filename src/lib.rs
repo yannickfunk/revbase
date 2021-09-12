@@ -112,6 +112,7 @@ pub trait Queries {
         user_id: &str,
         current_time: &str,
     ) -> Result<()>;
+    async fn get_unreads_for_user(&self, user_id: &str) -> Result<Vec<Document>>;
 }
 
 #[enum_dispatch(Queries)]
@@ -363,6 +364,10 @@ impl Queries for Database {
         self.driver
             .add_channels_to_unreads_for_user(channel_ids, user_id, current_time)
             .await
+    }
+
+    async fn get_unreads_for_user(&self, user_id: &str) -> Result<Vec<Document>> {
+        self.driver.get_unreads_for_user(user_id).await
     }
 }
 

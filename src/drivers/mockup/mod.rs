@@ -235,4 +235,8 @@ impl Queries for Mockup {
     ) -> Result<()> {
         todo!()
     }
+
+    async fn get_unreads_for_user(&self, user_id: &str) -> Result<Vec<Document>> {
+        todo!()
+    }
 }

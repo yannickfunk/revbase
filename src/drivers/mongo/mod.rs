@@ -983,4 +983,24 @@ impl Queries for MongoDB {
             })
             .map(|_| ())
     }
+
+    async fn get_unreads_for_user(&self, user_id: &str) -> Result<Vec<Document>> {
+        Ok(self
+            .revolt
+            .collection("channel_unreads")
+            .find(
+                doc! {
+                    "_id.user": user_id
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find_one",
+                with: "user_settings",
+            })?
+            .filter_map(async move |s| s.ok())
+            .collect::<Vec<Document>>()
+            .await)
+    }
 }
