@@ -336,4 +336,8 @@ impl Queries for Mockup {
     ) -> Result<Vec<String>> {
         todo!()
     }
+
+    async fn make_channel_inactive(&self, channel_id: &str) -> Result<()> {
+        todo!()
+    }
 }

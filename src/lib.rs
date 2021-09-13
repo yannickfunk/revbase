@@ -161,6 +161,7 @@ pub trait Queries {
         &self,
         user_id: &str,
     ) -> Result<Vec<String>>;
+    async fn make_channel_inactive(&self, channel_id: &str) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -533,6 +534,10 @@ impl Queries for Database {
         self.driver
             .get_channel_ids_from_sms_dms_groups_where_user_is_recipient(user_id)
             .await
+    }
+
+    async fn make_channel_inactive(&self, channel_id: &str) -> Result<()> {
+        self.driver.make_channel_inactive(channel_id).await
     }
 }
 

@@ -1425,4 +1425,26 @@ impl Queries for MongoDB {
         }
         Ok(channel_ids)
     }
+
+    async fn make_channel_inactive(&self, channel_id: &str) -> Result<()> {
+        self.revolt
+            .collection("channels")
+            .update_one(
+                doc! {
+                    "_id": channel_id
+                },
+                doc! {
+                    "$set": {
+                        "active": false
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "channel",
+            })?;
+        Ok(())
+    }
 }
