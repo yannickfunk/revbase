@@ -157,6 +157,10 @@ pub trait Queries {
         channel_ids: Vec<&str>,
         user_id: &str,
     ) -> Result<Vec<Channel>>;
+    async fn get_channel_ids_from_sms_dms_groups_where_user_is_recipient(
+        &self,
+        user_id: &str,
+    ) -> Result<Vec<String>>;
 }
 
 #[enum_dispatch(Queries)]
@@ -519,6 +523,15 @@ impl Queries for Database {
     ) -> Result<Vec<Channel>> {
         self.driver
             .get_sms_dms_groups_where_user_is_recipient(channel_ids, user_id)
+            .await
+    }
+
+    async fn get_channel_ids_from_sms_dms_groups_where_user_is_recipient(
+        &self,
+        user_id: &str,
+    ) -> Result<Vec<String>> {
+        self.driver
+            .get_channel_ids_from_sms_dms_groups_where_user_is_recipient(user_id)
             .await
     }
 }

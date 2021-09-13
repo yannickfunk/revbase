@@ -329,4 +329,11 @@ impl Queries for Mockup {
     ) -> Result<Vec<Channel>> {
         todo!()
     }
+
+    async fn get_channel_ids_from_sms_dms_groups_where_user_is_recipient(
+        &self,
+        user_id: &str,
+    ) -> Result<Vec<String>> {
+        todo!()
+    }
 }
