@@ -1477,4 +1477,16 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn apply_channel_changes(&self, channel_id: &str, change_doc: Document) -> Result<()> {
+        self.revolt
+            .collection("channels")
+            .update_one(doc! { "_id": channel_id }, change_doc, None)
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "channel",
+            })?;
+        Ok(())
+    }
 }

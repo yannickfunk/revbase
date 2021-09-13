@@ -168,6 +168,7 @@ pub trait Queries {
         new_owner: &str,
         old_owner: &str,
     ) -> Result<()>;
+    async fn apply_channel_changes(&self, channel_id: &str, change_doc: Document) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -554,6 +555,12 @@ impl Queries for Database {
     ) -> Result<()> {
         self.driver
             .update_channel_owner(channel_id, new_owner, old_owner)
+            .await
+    }
+
+    async fn apply_channel_changes(&self, channel_id: &str, change_doc: Document) -> Result<()> {
+        self.driver
+            .apply_channel_changes(channel_id, change_doc)
             .await
     }
 }

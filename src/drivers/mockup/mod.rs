@@ -349,4 +349,8 @@ impl Queries for Mockup {
     ) -> Result<()> {
         todo!()
     }
+
+    async fn apply_channel_changes(&self, channel_id: &str, change_doc: Document) -> Result<()> {
+        todo!()
+    }
 }
