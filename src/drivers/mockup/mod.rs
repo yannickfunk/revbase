@@ -340,4 +340,13 @@ impl Queries for Mockup {
     async fn make_channel_inactive(&self, channel_id: &str) -> Result<()> {
         todo!()
     }
+
+    async fn update_channel_owner(
+        &self,
+        channel_id: &str,
+        new_owner: &str,
+        old_owner: &str,
+    ) -> Result<()> {
+        todo!()
+    }
 }

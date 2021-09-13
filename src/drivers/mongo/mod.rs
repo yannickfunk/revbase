@@ -1447,4 +1447,34 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn update_channel_owner(
+        &self,
+        channel_id: &str,
+        new_owner: &str,
+        old_owner: &str,
+    ) -> Result<()> {
+        self.revolt
+            .collection("channels")
+            .update_one(
+                doc! {
+                    "_id": channel_id
+                },
+                doc! {
+                    "$set": {
+                        "owner": new_owner
+                    },
+                    "$pull": {
+                        "recipients": old_owner
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "channel",
+            })?;
+        Ok(())
+    }
 }

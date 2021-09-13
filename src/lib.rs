@@ -162,6 +162,12 @@ pub trait Queries {
         user_id: &str,
     ) -> Result<Vec<String>>;
     async fn make_channel_inactive(&self, channel_id: &str) -> Result<()>;
+    async fn update_channel_owner(
+        &self,
+        channel_id: &str,
+        new_owner: &str,
+        old_owner: &str,
+    ) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -538,6 +544,17 @@ impl Queries for Database {
 
     async fn make_channel_inactive(&self, channel_id: &str) -> Result<()> {
         self.driver.make_channel_inactive(channel_id).await
+    }
+
+    async fn update_channel_owner(
+        &self,
+        channel_id: &str,
+        new_owner: &str,
+        old_owner: &str,
+    ) -> Result<()> {
+        self.driver
+            .update_channel_owner(channel_id, new_owner, old_owner)
+            .await
     }
 }
 
