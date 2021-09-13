@@ -321,4 +321,12 @@ impl Queries for Mockup {
     ) -> Result<bool> {
         todo!()
     }
+
+    async fn get_sms_dms_groups_where_user_is_recipient(
+        &self,
+        channel_ids: Vec<&str>,
+        user_id: &str,
+    ) -> Result<Vec<Channel>> {
+        todo!()
+    }
 }

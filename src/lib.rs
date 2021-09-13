@@ -152,6 +152,11 @@ pub trait Queries {
     async fn add_recipient_to_channel(&self, channel_id: &str, recipient_id: &str) -> Result<()>;
     async fn are_users_connected_in_dms_or_group(&self, user_a: &str, user_b: &str)
         -> Result<bool>;
+    async fn get_sms_dms_groups_where_user_is_recipient(
+        &self,
+        channel_ids: Vec<&str>,
+        user_id: &str,
+    ) -> Result<Vec<Channel>>;
 }
 
 #[enum_dispatch(Queries)]
@@ -504,6 +509,16 @@ impl Queries for Database {
     ) -> Result<bool> {
         self.driver
             .are_users_connected_in_dms_or_group(user_a, user_b)
+            .await
+    }
+
+    async fn get_sms_dms_groups_where_user_is_recipient(
+        &self,
+        channel_ids: Vec<&str>,
+        user_id: &str,
+    ) -> Result<Vec<Channel>> {
+        self.driver
+            .get_sms_dms_groups_where_user_is_recipient(channel_ids, user_id)
             .await
     }
 }

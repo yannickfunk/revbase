@@ -1334,4 +1334,55 @@ impl Queries for MongoDB {
             })?
             .is_some())
     }
+
+    async fn get_sms_dms_groups_where_user_is_recipient(
+        &self,
+        channel_ids: Vec<&str>,
+        user_id: &str,
+    ) -> Result<Vec<Channel>> {
+        let mut cursor = self
+            .revolt
+            .collection("channels")
+            .find(
+                doc! {
+                    "$or": [
+                        {
+                            "_id": {
+                                "$in": channel_ids
+                            }
+                        },
+                        {
+                            "channel_type": "SavedMessages",
+                            "user": user_id
+                        },
+                        {
+                            "channel_type": "DirectMessage",
+                            "recipients": user_id
+                        },
+                        {
+                            "channel_type": "Group",
+                            "recipients": user_id
+                        }
+                    ]
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find",
+                with: "channels",
+            })?;
+
+        let mut channels = vec![];
+        while let Some(result) = cursor.next().await {
+            if let Ok(doc) = result {
+                let channel = from_document(doc).map_err(|_| Error::DatabaseError {
+                    operation: "from_document",
+                    with: "channel",
+                })?;
+                channels.push(channel);
+            }
+        }
+        Ok(channels)
+    }
 }
