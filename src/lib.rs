@@ -150,6 +150,8 @@ pub trait Queries {
     async fn add_channel(&self, channel: &Channel) -> Result<()>;
     async fn delete_channel(&self, id: &str) -> Result<()>;
     async fn add_recipient_to_channel(&self, channel_id: &str, recipient_id: &str) -> Result<()>;
+    async fn are_users_connected_in_dms_or_group(&self, user_a: &str, user_b: &str)
+        -> Result<bool>;
 }
 
 #[enum_dispatch(Queries)]
@@ -492,6 +494,16 @@ impl Queries for Database {
     async fn add_recipient_to_channel(&self, channel_id: &str, recipient_id: &str) -> Result<()> {
         self.driver
             .add_recipient_to_channel(channel_id, recipient_id)
+            .await
+    }
+
+    async fn are_users_connected_in_dms_or_group(
+        &self,
+        user_a: &str,
+        user_b: &str,
+    ) -> Result<bool> {
+        self.driver
+            .are_users_connected_in_dms_or_group(user_a, user_b)
             .await
     }
 }

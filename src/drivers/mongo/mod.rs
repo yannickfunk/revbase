@@ -1307,4 +1307,31 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn are_users_connected_in_dms_or_group(
+        &self,
+        user_a: &str,
+        user_b: &str,
+    ) -> Result<bool> {
+        Ok(self
+            .revolt
+            .collection("channels")
+            .find_one(
+                doc! {
+                    "channel_type": {
+                        "$in": ["Group", "DirectMessage"]
+                    },
+                    "recipients": {
+                        "$all": [ user_a, user_b ]
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find_one",
+                with: "channels",
+            })?
+            .is_some())
+    }
 }
