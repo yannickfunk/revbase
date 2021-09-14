@@ -169,6 +169,8 @@ pub trait Queries {
         old_owner: &str,
     ) -> Result<()>;
     async fn apply_channel_changes(&self, channel_id: &str, change_doc: Document) -> Result<()>;
+
+    // TODO messages
 }
 
 #[enum_dispatch(Queries)]
