@@ -1509,4 +1509,33 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn get_ids_from_messages_with_attachments(
+        &self,
+        channel_id: &str,
+    ) -> Result<Vec<String>> {
+        Ok(self
+            .revolt
+            .collection("messages")
+            .find(
+                doc! {
+                    "channel": channel_id,
+                    "attachment": {
+                        "$exists": 1
+                    }
+                },
+                FindOptions::builder().projection(doc! { "_id": 1 }).build(),
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "fetch_many",
+                with: "messages",
+            })?
+            .filter_map(async move |s| s.ok())
+            .collect::<Vec<Document>>()
+            .await
+            .into_iter()
+            .filter_map(|x| x.get_str("_id").ok().map(|x| x.to_string()))
+            .collect())
+    }
 }

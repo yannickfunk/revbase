@@ -357,4 +357,11 @@ impl Queries for Mockup {
     async fn set_message_updates(&self, message_id: &str, set_doc: Document) -> Result<()> {
         todo!()
     }
+
+    async fn get_ids_from_messages_with_attachments(
+        &self,
+        channel_id: &str,
+    ) -> Result<Vec<String>> {
+        todo!()
+    }
 }
