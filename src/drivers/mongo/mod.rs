@@ -1489,4 +1489,24 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn set_message_updates(&self, message_id: &str, set_doc: Document) -> Result<()> {
+        self.revolt
+            .collection("messages")
+            .update_one(
+                doc! {
+                    "_id": message_id
+                },
+                doc! {
+                    "$set": set_doc
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "message",
+            })?;
+        Ok(())
+    }
 }

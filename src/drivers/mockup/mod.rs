@@ -353,4 +353,8 @@ impl Queries for Mockup {
     async fn apply_channel_changes(&self, channel_id: &str, change_doc: Document) -> Result<()> {
         todo!()
     }
+
+    async fn set_message_updates(&self, message_id: &str, set_doc: Document) -> Result<()> {
+        todo!()
+    }
 }

@@ -170,7 +170,8 @@ pub trait Queries {
     ) -> Result<()>;
     async fn apply_channel_changes(&self, channel_id: &str, change_doc: Document) -> Result<()>;
 
-    // TODO messages
+    // messages
+    async fn set_message_updates(&self, message_id: &str, set_doc: Document) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -564,6 +565,10 @@ impl Queries for Database {
         self.driver
             .apply_channel_changes(channel_id, change_doc)
             .await
+    }
+
+    async fn set_message_updates(&self, message_id: &str, set_doc: Document) -> Result<()> {
+        self.driver.set_message_updates(message_id, set_doc).await
     }
 }
 
