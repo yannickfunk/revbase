@@ -1538,4 +1538,21 @@ impl Queries for MongoDB {
             .filter_map(|x| x.get_str("_id").ok().map(|x| x.to_string()))
             .collect())
     }
+
+    async fn delete_messages_from_channel(&self, channel_id: &str) -> Result<()> {
+        self.revolt
+            .collection("messages")
+            .delete_many(
+                doc! {
+                    "channel": channel_id
+                },
+                None,
+            )
+            .await
+            .map(|_| ())
+            .map_err(|_| Error::DatabaseError {
+                operation: "delete_many",
+                with: "messages",
+            })
+    }
 }

@@ -364,4 +364,8 @@ impl Queries for Mockup {
     ) -> Result<Vec<String>> {
         todo!()
     }
+
+    async fn delete_messages_from_channel(&self, channel_id: &str) -> Result<()> {
+        todo!()
+    }
 }

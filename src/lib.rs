@@ -174,6 +174,7 @@ pub trait Queries {
     async fn set_message_updates(&self, message_id: &str, set_doc: Document) -> Result<()>;
     async fn get_ids_from_messages_with_attachments(&self, channel_id: &str)
         -> Result<Vec<String>>;
+    async fn delete_messages_from_channel(&self, channel_id: &str) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -580,6 +581,10 @@ impl Queries for Database {
         self.driver
             .get_ids_from_messages_with_attachments(channel_id)
             .await
+    }
+
+    async fn delete_messages_from_channel(&self, channel_id: &str) -> Result<()> {
+        self.driver.delete_messages_from_channel(channel_id).await
     }
 }
 
