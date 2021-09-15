@@ -178,6 +178,7 @@ pub trait Queries {
     async fn delete_messages_from_channel(&self, channel_id: &str) -> Result<()>;
     async fn add_message(&self, message: &Message) -> Result<()>;
     async fn add_embeds_to_message(&self, message_id: &str, embeds: &Vec<Embed>) -> Result<()>;
+    async fn delete_message(&self, message_id: &str) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -596,6 +597,10 @@ impl Queries for Database {
 
     async fn add_embeds_to_message(&self, message_id: &str, embeds: &Vec<Embed>) -> Result<()> {
         self.driver.add_embeds_to_message(message_id, embeds).await
+    }
+
+    async fn delete_message(&self, message_id: &str) -> Result<()> {
+        self.driver.delete_message(message_id).await
     }
 }
 

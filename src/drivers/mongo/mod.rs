@@ -1597,4 +1597,21 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn delete_message(&self, message_id: &str) -> Result<()> {
+        self.revolt
+            .collection("messages")
+            .delete_one(
+                doc! {
+                    "_id": message_id
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "delete_one",
+                with: "message",
+            })?;
+        Ok(())
+    }
 }

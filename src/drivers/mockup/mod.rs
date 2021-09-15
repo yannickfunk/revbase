@@ -377,4 +377,8 @@ impl Queries for Mockup {
     async fn add_embeds_to_message(&self, message_id: &str, embeds: &Vec<Embed>) -> Result<()> {
         todo!()
     }
+
+    async fn delete_message(&self, message_id: &str) -> Result<()> {
+        todo!()
+    }
 }
