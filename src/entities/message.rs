@@ -1,4 +1,4 @@
-use crate::util::variables::{USE_JANUARY, VAPID_PRIVATE_KEY, PUBLIC_URL};
+/*use crate::util::variables::{USE_JANUARY, VAPID_PRIVATE_KEY, PUBLIC_URL};
 use crate::{
     database::*,
     notifications::{events::ClientboundNotification, websocket::is_online},
@@ -7,13 +7,18 @@ use crate::{
 
 use futures::StreamExt;
 use mongodb::options::UpdateOptions;
+*/
+use crate::entities::File;
 use mongodb::{
     bson::{doc, to_bson, DateTime},
     options::FindOptions,
 };
+
+use crate::entities::microservice::january::Embed;
 use rocket::serde::json::Value;
 use serde::{Deserialize, Serialize};
 use ulid::Ulid;
+/*
 use web_push::{
     ContentEncoding, SubscriptionInfo, VapidSignatureBuilder, WebPushClient, WebPushMessageBuilder,
 };
@@ -74,6 +79,7 @@ impl PushNotification {
         }
     }
 }
+*/
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "type")]
@@ -99,7 +105,7 @@ pub enum SystemMessage {
     #[serde(rename = "channel_icon_changed")]
     ChannelIconChanged { by: String },
 }
-
+/*
 impl Into<String> for SystemMessage {
     fn into(self) -> String {
         match self {
@@ -116,14 +122,14 @@ impl Into<String> for SystemMessage {
         }
     }
 }
-
+*/
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(untagged)]
 pub enum Content {
     Text(String),
     SystemMessage(SystemMessage),
 }
-
+/*
 impl Content {
     pub async fn send_as_system(self, target: &Channel) -> Result<()> {
         Message::create(
@@ -136,7 +142,7 @@ impl Content {
         .publish(&target, false)
         .await
     }
-}
+}*/
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Message {
@@ -157,10 +163,10 @@ pub struct Message {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mentions: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub replies: Option<Vec<String>>
+    pub replies: Option<Vec<String>>,
 }
 
-impl Message {
+/*impl Message {
     pub fn create(
         author: String,
         channel: String,
@@ -504,4 +510,4 @@ impl Message {
 
         Ok(())
     }
-}
+}*/

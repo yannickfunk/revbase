@@ -1,15 +1,15 @@
 /*
 mod channel;
 mod invites;
-mod message;
+
 mod server;
 mod sync;
-
  */
 mod bots;
 mod channel;
 mod file;
 mod invites;
+mod message;
 mod microservice;
 mod user;
 /*
@@ -29,4 +29,5 @@ pub use bots::*;
 pub use channel::*;
 pub use file::*;
 pub use invites::*;
+pub use message::*;
 pub use user::*;

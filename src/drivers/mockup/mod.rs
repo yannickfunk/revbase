@@ -1,4 +1,4 @@
-use crate::entities::{BannedUser, Bot, Channel, File, Invite, Subscription, User};
+use crate::entities::{BannedUser, Bot, Channel, File, Invite, Message, Subscription, User};
 use crate::util::result::Result;
 use crate::Queries;
 use mongodb::bson::Document;
@@ -366,6 +366,10 @@ impl Queries for Mockup {
     }
 
     async fn delete_messages_from_channel(&self, channel_id: &str) -> Result<()> {
+        todo!()
+    }
+
+    async fn add_message(&self, message: &Message) -> Result<()> {
         todo!()
     }
 }

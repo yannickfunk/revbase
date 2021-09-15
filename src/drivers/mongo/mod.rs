@@ -1,10 +1,10 @@
 mod migrations;
-use crate::entities::{BannedUser, Bot, Channel, File, Invite, Subscription, User};
+use crate::entities::{BannedUser, Bot, Channel, File, Invite, Message, Subscription, User};
 use crate::util::result::*;
 use crate::Queries;
 use migrations::{init, scripts};
 use mongodb::{
-    bson::{doc, from_document, to_document, Document},
+    bson::{doc, from_document, to_bson, to_document, Document},
     error::Result as MongoResult,
     options::{Collation, FindOneOptions, FindOptions, UpdateOptions},
     Client, Collection, Database,
@@ -1554,5 +1554,20 @@ impl Queries for MongoDB {
                 operation: "delete_many",
                 with: "messages",
             })
+    }
+
+    async fn add_message(&self, message: &Message) -> Result<()> {
+        self.revolt
+            .collection("messages")
+            .insert_one(
+                to_bson(message).unwrap().as_document().unwrap().clone(),
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "insert_one",
+                with: "message",
+            })?;
+        Ok(())
     }
 }

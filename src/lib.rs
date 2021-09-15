@@ -2,7 +2,7 @@
 
 extern crate mongodb;
 
-use crate::entities::{BannedUser, Bot, Channel, File, Invite, Subscription, User};
+use crate::entities::{BannedUser, Bot, Channel, File, Invite, Message, Subscription, User};
 use crate::util::result::Result;
 use drivers::{mockup::Mockup, mongo::MongoDB};
 use enum_dispatch::enum_dispatch;
@@ -175,6 +175,7 @@ pub trait Queries {
     async fn get_ids_from_messages_with_attachments(&self, channel_id: &str)
         -> Result<Vec<String>>;
     async fn delete_messages_from_channel(&self, channel_id: &str) -> Result<()>;
+    async fn add_message(&self, message: &Message) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -585,6 +586,10 @@ impl Queries for Database {
 
     async fn delete_messages_from_channel(&self, channel_id: &str) -> Result<()> {
         self.driver.delete_messages_from_channel(channel_id).await
+    }
+
+    async fn add_message(&self, message: &Message) -> Result<()> {
+        self.driver.add_message(message).await
     }
 }
 

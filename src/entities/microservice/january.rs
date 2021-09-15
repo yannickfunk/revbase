@@ -1,7 +1,3 @@
-use crate::util::{
-    result::{Error, Result},
-    variables::JANUARY_URL,
-};
 use linkify::{LinkFinder, LinkKind};
 use regex::Regex;
 use serde::{Deserialize, Serialize};
@@ -96,7 +92,7 @@ pub enum Embed {
     None,
 }
 
-impl Embed {
+/*impl Embed {
     pub async fn generate(content: String) -> Result<Vec<Embed>> {
         lazy_static! {
             static ref RE_CODE: Regex = Regex::new("```(?:.|\n)+?```|`(?:.|\n)+?`").unwrap();
@@ -151,4 +147,4 @@ impl Embed {
             },
         }
     }
-}
+}*/
