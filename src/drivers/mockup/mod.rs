@@ -1,3 +1,4 @@
+use crate::entities::microservice::january::Embed;
 use crate::entities::{BannedUser, Bot, Channel, File, Invite, Message, Subscription, User};
 use crate::util::result::Result;
 use crate::Queries;
@@ -370,6 +371,10 @@ impl Queries for Mockup {
     }
 
     async fn add_message(&self, message: &Message) -> Result<()> {
+        todo!()
+    }
+
+    async fn add_embeds_to_message(&self, message_id: &str, embeds: &Vec<Embed>) -> Result<()> {
         todo!()
     }
 }

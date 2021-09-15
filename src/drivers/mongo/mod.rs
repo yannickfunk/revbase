@@ -10,6 +10,7 @@ use mongodb::{
     Client, Collection, Database,
 };
 
+use crate::entities::microservice::january::Embed;
 use futures::{StreamExt, TryStreamExt};
 use rocket::async_trait;
 use rocket::http::ext::IntoCollection;
@@ -1566,6 +1567,32 @@ impl Queries for MongoDB {
             .await
             .map_err(|_| Error::DatabaseError {
                 operation: "insert_one",
+                with: "message",
+            })?;
+        Ok(())
+    }
+
+    async fn add_embeds_to_message(&self, message_id: &str, embeds: &Vec<Embed>) -> Result<()> {
+        let bson = to_bson(embeds).map_err(|_| Error::DatabaseError {
+            operation: "update_one",
+            with: "message",
+        })?;
+        self.revolt
+            .collection("messages")
+            .update_one(
+                doc! {
+                    "_id": message_id
+                },
+                doc! {
+                    "$set": {
+                        "embeds": bson
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
                 with: "message",
             })?;
         Ok(())

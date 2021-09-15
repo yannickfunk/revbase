@@ -2,6 +2,7 @@
 
 extern crate mongodb;
 
+use crate::entities::microservice::january::Embed;
 use crate::entities::{BannedUser, Bot, Channel, File, Invite, Message, Subscription, User};
 use crate::util::result::Result;
 use drivers::{mockup::Mockup, mongo::MongoDB};
@@ -176,6 +177,7 @@ pub trait Queries {
         -> Result<Vec<String>>;
     async fn delete_messages_from_channel(&self, channel_id: &str) -> Result<()>;
     async fn add_message(&self, message: &Message) -> Result<()>;
+    async fn add_embeds_to_message(&self, message_id: &str, embeds: &Vec<Embed>) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -590,6 +592,10 @@ impl Queries for Database {
 
     async fn add_message(&self, message: &Message) -> Result<()> {
         self.driver.add_message(message).await
+    }
+
+    async fn add_embeds_to_message(&self, message_id: &str, embeds: &Vec<Embed>) -> Result<()> {
+        self.driver.add_embeds_to_message(message_id, embeds).await
     }
 }
 

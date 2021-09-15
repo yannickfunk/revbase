@@ -10,7 +10,7 @@ mod channel;
 mod file;
 mod invites;
 mod message;
-mod microservice;
+pub(crate) mod microservice;
 mod user;
 /*
 
