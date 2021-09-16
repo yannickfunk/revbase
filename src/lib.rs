@@ -179,6 +179,8 @@ pub trait Queries {
     async fn add_message(&self, message: &Message) -> Result<()>;
     async fn add_embeds_to_message(&self, message_id: &str, embeds: &Vec<Embed>) -> Result<()>;
     async fn delete_message(&self, message_id: &str) -> Result<()>;
+
+    // TODO remaining collections
 }
 
 #[enum_dispatch(Queries)]
