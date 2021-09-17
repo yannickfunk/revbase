@@ -520,4 +520,15 @@ impl Queries for Mockup {
     async fn add_channel_to_server(&self, server_id: &str, channel_id: &str) -> Result<()> {
         todo!()
     }
+
+    async fn create_role(
+        &self,
+        server_id: &str,
+        role_id: &str,
+        role_name: &str,
+        default_permission: i32,
+        default_permission_server: i32,
+    ) -> Result<()> {
+        todo!()
+    }
 }

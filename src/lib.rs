@@ -252,6 +252,14 @@ pub trait Queries {
     async fn add_server(&self, server: &Server) -> Result<()>;
     async fn get_servers(&self, server_ids: Vec<&str>) -> Result<Vec<Server>>;
     async fn add_channel_to_server(&self, server_id: &str, channel_id: &str) -> Result<()>;
+    async fn create_role(
+        &self,
+        server_id: &str,
+        role_id: &str,
+        role_name: &str,
+        default_permission: i32,
+        default_permission_server: i32,
+    ) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -837,6 +845,25 @@ impl Queries for Database {
     async fn add_channel_to_server(&self, server_id: &str, channel_id: &str) -> Result<()> {
         self.driver
             .add_channel_to_server(server_id, channel_id)
+            .await
+    }
+
+    async fn create_role(
+        &self,
+        server_id: &str,
+        role_id: &str,
+        role_name: &str,
+        default_permission: i32,
+        default_permission_server: i32,
+    ) -> Result<()> {
+        self.driver
+            .create_role(
+                server_id,
+                role_id,
+                role_name,
+                default_permission,
+                default_permission_server,
+            )
             .await
     }
 }

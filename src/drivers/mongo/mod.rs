@@ -2246,4 +2246,39 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn create_role(
+        &self,
+        server_id: &str,
+        role_id: &str,
+        role_name: &str,
+        default_permission: i32,
+        default_permission_server: i32,
+    ) -> Result<()> {
+        self.revolt
+            .collection("servers")
+            .update_one(
+                doc! {
+                    "_id": server_id
+                },
+                doc! {
+                    "$set": {
+                        "roles.".to_owned() + role_id: {
+                            "name": role_name,
+                            "permissions": [
+                                default_permission,
+                                default_permission_server
+                            ]
+                        }
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "servers",
+            })?;
+        Ok(())
+    }
 }
