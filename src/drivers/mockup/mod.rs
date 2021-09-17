@@ -531,4 +531,8 @@ impl Queries for Mockup {
     ) -> Result<()> {
         todo!()
     }
+
+    async fn delete_role(&self, server_id: &str, role_id: &str) -> Result<()> {
+        todo!()
+    }
 }

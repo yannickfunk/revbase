@@ -2281,4 +2281,26 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn delete_role(&self, server_id: &str, role_id: &str) -> Result<()> {
+        self.revolt
+            .collection("servers")
+            .update_one(
+                doc! {
+                    "_id": server_id
+                },
+                doc! {
+                    "$unset": {
+                        "roles.".to_owned() + role_id: 1
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "servers",
+            })?;
+        Ok(())
+    }
 }

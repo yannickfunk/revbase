@@ -260,6 +260,7 @@ pub trait Queries {
         default_permission: i32,
         default_permission_server: i32,
     ) -> Result<()>;
+    async fn delete_role(&self, server_id: &str, role_id: &str) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -865,6 +866,10 @@ impl Queries for Database {
                 default_permission_server,
             )
             .await
+    }
+
+    async fn delete_role(&self, server_id: &str, role_id: &str) -> Result<()> {
+        self.driver.delete_role(server_id, role_id).await
     }
 }
 
