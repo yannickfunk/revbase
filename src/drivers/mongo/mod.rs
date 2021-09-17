@@ -2128,4 +2128,22 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn apply_server_changes(&self, server_id: &str, change_doc: Document) -> Result<()> {
+        self.revolt
+            .collection("servers")
+            .update_one(
+                doc! {
+                    "_id": server_id
+                },
+                change_doc,
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "servers",
+            })?;
+        Ok(())
+    }
 }

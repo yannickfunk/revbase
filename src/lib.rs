@@ -242,6 +242,7 @@ pub trait Queries {
         server_permissions: i32,
         channel_permissions: i32,
     ) -> Result<()>;
+    async fn apply_server_changes(&self, server_id: &str, change_doc: Document) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -796,6 +797,12 @@ impl Queries for Database {
     ) -> Result<()> {
         self.driver
             .update_server_permissions(server_id, role_id, server_permissions, channel_permissions)
+            .await
+    }
+
+    async fn apply_server_changes(&self, server_id: &str, change_doc: Document) -> Result<()> {
+        self.driver
+            .apply_server_changes(server_id, change_doc)
             .await
     }
 }

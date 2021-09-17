@@ -495,4 +495,8 @@ impl Queries for Mockup {
     ) -> Result<()> {
         todo!()
     }
+
+    async fn apply_server_changes(&self, server_id: &str, change_doc: Document) -> Result<()> {
+        todo!()
+    }
 }
