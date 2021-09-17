@@ -1919,4 +1919,24 @@ impl Queries for MongoDB {
             .filter_map(|x| from_document(x).ok())
             .collect::<Vec<Member>>())
     }
+
+    async fn add_server_member(&self, server_id: &str, user_id: &str) -> Result<()> {
+        self.revolt
+            .collection("server_members")
+            .insert_one(
+                doc! {
+                    "_id": {
+                        "server": server_id,
+                        "user": user_id
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "insert_one",
+                with: "server_members",
+            })?;
+        Ok(())
+    }
 }

@@ -212,6 +212,7 @@ pub trait Queries {
     // server members
     async fn get_server_member(&self, server_id: &str, user_id: &str) -> Result<Member>;
     async fn get_server_members(&self, server_id: &str) -> Result<Vec<Member>>;
+    async fn add_server_member(&self, server_id: &str, user_id: &str) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -702,6 +703,10 @@ impl Queries for Database {
 
     async fn get_server_members(&self, server_id: &str) -> Result<Vec<Member>> {
         self.driver.get_server_members(server_id).await
+    }
+
+    async fn add_server_member(&self, server_id: &str, user_id: &str) -> Result<()> {
+        self.driver.add_server_member(server_id, user_id).await
     }
 }
 
