@@ -2069,4 +2069,34 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn get_server_memberships_by_ids(
+        &self,
+        user_id: &str,
+        server_ids: Vec<&str>,
+    ) -> Result<Vec<Member>> {
+        Ok(self
+            .revolt
+            .collection("server_members")
+            .find(
+                doc! {
+                    "_id.user": user_id,
+                    "_id.server": {
+                        "$in": server_ids
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find",
+                with: "server_members",
+            })?
+            .filter_map(async move |s| s.ok())
+            .collect::<Vec<Document>>()
+            .await
+            .into_iter()
+            .filter_map(|x| from_document(x).ok())
+            .collect::<Vec<Member>>())
+    }
 }

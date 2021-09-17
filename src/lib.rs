@@ -228,6 +228,11 @@ pub trait Queries {
         change_doc: Document,
     ) -> Result<()>;
     async fn delete_role_from_server_members(&self, server_id: &str, role_id: &str) -> Result<()>;
+    async fn get_server_memberships_by_ids(
+        &self,
+        user_id: &str,
+        server_ids: Vec<&str>,
+    ) -> Result<Vec<Member>>;
 }
 
 #[enum_dispatch(Queries)]
@@ -760,6 +765,16 @@ impl Queries for Database {
     async fn delete_role_from_server_members(&self, server_id: &str, role_id: &str) -> Result<()> {
         self.driver
             .delete_role_from_server_members(server_id, role_id)
+            .await
+    }
+
+    async fn get_server_memberships_by_ids(
+        &self,
+        user_id: &str,
+        server_ids: Vec<&str>,
+    ) -> Result<Vec<Member>> {
+        self.driver
+            .get_server_memberships_by_ids(user_id, server_ids)
             .await
     }
 }

@@ -477,4 +477,12 @@ impl Queries for Mockup {
     async fn delete_role_from_server_members(&self, server_id: &str, role_id: &str) -> Result<()> {
         todo!()
     }
+
+    async fn get_server_memberships_by_ids(
+        &self,
+        user_id: &str,
+        server_ids: Vec<&str>,
+    ) -> Result<Vec<Member>> {
+        todo!()
+    }
 }
