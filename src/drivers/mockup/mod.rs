@@ -507,4 +507,8 @@ impl Queries for Mockup {
     async fn get_servers(&self, server_ids: Vec<&str>) -> Result<Vec<Server>> {
         todo!()
     }
+
+    async fn add_channel_to_server(&self, server_id: &str, channel_id: &str) -> Result<()> {
+        todo!()
+    }
 }

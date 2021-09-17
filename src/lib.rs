@@ -245,6 +245,7 @@ pub trait Queries {
     async fn apply_server_changes(&self, server_id: &str, change_doc: Document) -> Result<()>;
     async fn add_server(&self, server: &Server) -> Result<()>;
     async fn get_servers(&self, server_ids: Vec<&str>) -> Result<Vec<Server>>;
+    async fn add_channel_to_server(&self, server_id: &str, channel_id: &str) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -814,6 +815,12 @@ impl Queries for Database {
 
     async fn get_servers(&self, server_ids: Vec<&str>) -> Result<Vec<Server>> {
         self.driver.get_servers(server_ids).await
+    }
+
+    async fn add_channel_to_server(&self, server_id: &str, channel_id: &str) -> Result<()> {
+        self.driver
+            .add_channel_to_server(server_id, channel_id)
+            .await
     }
 }
 

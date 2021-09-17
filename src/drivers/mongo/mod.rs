@@ -2196,4 +2196,26 @@ impl Queries for MongoDB {
         }
         Ok(servers)
     }
+
+    async fn add_channel_to_server(&self, server_id: &str, channel_id: &str) -> Result<()> {
+        self.revolt
+            .collection("servers")
+            .update_one(
+                doc! {
+                    "_id": server_id
+                },
+                doc! {
+                    "$addToSet": {
+                        "channels": channel_id
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "server",
+            })?;
+        Ok(())
+    }
 }
