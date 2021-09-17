@@ -2099,4 +2099,33 @@ impl Queries for MongoDB {
             .filter_map(|x| from_document(x).ok())
             .collect::<Vec<Member>>())
     }
+
+    async fn update_server_permissions(
+        &self,
+        server_id: &str,
+        role_id: &str,
+        server_permissions: i32,
+        channel_permissions: i32,
+    ) -> Result<()> {
+        self.revolt
+            .collection("servers")
+            .update_one(
+                doc! { "_id": server_id },
+                doc! {
+                    "$set": {
+                        "roles.".to_owned() + role_id + &".permissions": [
+                            server_permissions,
+                            channel_permissions
+                        ]
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "server",
+            })?;
+        Ok(())
+    }
 }

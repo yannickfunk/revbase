@@ -485,4 +485,14 @@ impl Queries for Mockup {
     ) -> Result<Vec<Member>> {
         todo!()
     }
+
+    async fn update_server_permissions(
+        &self,
+        server_id: &str,
+        role_id: &str,
+        server_permissions: i32,
+        channel_permissions: i32,
+    ) -> Result<()> {
+        todo!()
+    }
 }

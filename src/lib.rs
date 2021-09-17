@@ -233,6 +233,15 @@ pub trait Queries {
         user_id: &str,
         server_ids: Vec<&str>,
     ) -> Result<Vec<Member>>;
+
+    // servers
+    async fn update_server_permissions(
+        &self,
+        server_id: &str,
+        role_id: &str,
+        server_permissions: i32,
+        channel_permissions: i32,
+    ) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -775,6 +784,18 @@ impl Queries for Database {
     ) -> Result<Vec<Member>> {
         self.driver
             .get_server_memberships_by_ids(user_id, server_ids)
+            .await
+    }
+
+    async fn update_server_permissions(
+        &self,
+        server_id: &str,
+        role_id: &str,
+        server_permissions: i32,
+        channel_permissions: i32,
+    ) -> Result<()> {
+        self.driver
+            .update_server_permissions(server_id, role_id, server_permissions, channel_permissions)
             .await
     }
 }
