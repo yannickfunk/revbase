@@ -1,6 +1,6 @@
 mod migrations;
 use crate::entities::{
-    Ban, BannedUser, Bot, Channel, File, Invite, Message, Sort, Subscription, User,
+    Ban, BannedUser, Bot, Channel, File, Invite, Member, Message, Sort, Subscription, User,
 };
 use crate::util::result::*;
 use crate::Queries;
@@ -1869,5 +1869,31 @@ impl Queries for MongoDB {
                 with: "server_ban",
             })?;
         Ok(())
+    }
+
+    async fn get_server_member(&self, server_id: &str, user_id: &str) -> Result<Member> {
+        let doc = self
+            .revolt
+            .collection("server_members")
+            .find_one(
+                doc! {
+                    "_id.user": user_id,
+                    "_id.server": server_id
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find_one",
+                with: "server_member",
+            })?
+            .ok_or_else(|| Error::NotFound)?;
+
+        Ok(
+            from_document::<Member>(doc).map_err(|_| Error::DatabaseError {
+                operation: "from_document",
+                with: "server_member",
+            })?,
+        )
     }
 }

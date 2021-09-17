@@ -1,6 +1,6 @@
 use crate::entities::microservice::january::Embed;
 use crate::entities::{
-    Ban, BannedUser, Bot, Channel, File, Invite, Message, Sort, Subscription, User,
+    Ban, BannedUser, Bot, Channel, File, Invite, Member, Message, Sort, Subscription, User,
 };
 use crate::util::result::Result;
 use crate::Queries;
@@ -430,6 +430,10 @@ impl Queries for Mockup {
         user_id: &str,
         reason: Option<&str>,
     ) -> Result<()> {
+        todo!()
+    }
+
+    async fn get_server_member(&self, server_id: &str, user_id: &str) -> Result<Member> {
         todo!()
     }
 }
