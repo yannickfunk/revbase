@@ -419,4 +419,13 @@ impl Queries for Mockup {
     async fn get_ban(&self, server_id: &str, user_id: &str) -> Result<Ban> {
         todo!()
     }
+
+    async fn add_server_ban(
+        &self,
+        server_id: &str,
+        user_id: &str,
+        reason: Option<&str>,
+    ) -> Result<()> {
+        todo!()
+    }
 }

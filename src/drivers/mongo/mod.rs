@@ -1815,4 +1815,32 @@ impl Queries for MongoDB {
             with: "server_ban",
         })?)
     }
+
+    async fn add_server_ban(
+        &self,
+        server_id: &str,
+        user_id: &str,
+        reason: Option<&str>,
+    ) -> Result<()> {
+        let mut document = doc! {
+            "_id": {
+                "server": server_id,
+                "user": user_id
+            }
+        };
+
+        if let Some(reason) = reason {
+            document.insert("reason", reason);
+        }
+
+        self.revolt
+            .collection("server_bans")
+            .insert_one(document, None)
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "insert_one",
+                with: "server_ban",
+            })?;
+        Ok(())
+    }
 }
