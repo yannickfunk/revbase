@@ -503,4 +503,8 @@ impl Queries for Mockup {
     async fn add_server(&self, server: &Server) -> Result<()> {
         todo!()
     }
+
+    async fn get_servers(&self, server_ids: Vec<&str>) -> Result<Vec<Server>> {
+        todo!()
+    }
 }

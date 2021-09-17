@@ -244,6 +244,7 @@ pub trait Queries {
     ) -> Result<()>;
     async fn apply_server_changes(&self, server_id: &str, change_doc: Document) -> Result<()>;
     async fn add_server(&self, server: &Server) -> Result<()>;
+    async fn get_servers(&self, server_ids: Vec<&str>) -> Result<Vec<Server>>;
 }
 
 #[enum_dispatch(Queries)]
@@ -809,6 +810,10 @@ impl Queries for Database {
 
     async fn add_server(&self, server: &Server) -> Result<()> {
         self.driver.add_server(server).await
+    }
+
+    async fn get_servers(&self, server_ids: Vec<&str>) -> Result<Vec<Server>> {
+        self.driver.get_servers(server_ids).await
     }
 }
 

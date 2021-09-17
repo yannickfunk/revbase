@@ -2165,4 +2165,35 @@ impl Queries for MongoDB {
 
         Ok(())
     }
+
+    async fn get_servers(&self, server_ids: Vec<&str>) -> Result<Vec<Server>> {
+        let mut cursor = self
+            .revolt
+            .collection("servers")
+            .find(
+                doc! {
+                    "_id": {
+                        "$in": server_ids
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find",
+                with: "servers",
+            })?;
+
+        let mut servers = vec![];
+        while let Some(result) = cursor.next().await {
+            if let Ok(doc) = result {
+                let server: Server = from_document(doc).map_err(|_| Error::DatabaseError {
+                    operation: "from_document",
+                    with: "server",
+                })?;
+                servers.push(server);
+            }
+        }
+        Ok(servers)
+    }
 }
