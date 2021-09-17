@@ -405,4 +405,8 @@ impl Queries for Mockup {
     async fn does_message_exist_by_nonce(&self, nonce: &str) -> Result<bool> {
         todo!()
     }
+
+    async fn delete_server_ban(&self, server_id: &str, user_id: &str) -> Result<()> {
+        todo!()
+    }
 }

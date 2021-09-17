@@ -1752,4 +1752,22 @@ impl Queries for MongoDB {
             })?
             .is_some())
     }
+
+    async fn delete_server_ban(&self, server_id: &str, user_id: &str) -> Result<()> {
+        self.revolt
+            .collection("server_bans")
+            .delete_one(
+                doc! {
+                    "_id.server": server_id,
+                    "_id.user": user_id
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "delete_one",
+                with: "server_ban",
+            })?;
+        Ok(())
+    }
 }
