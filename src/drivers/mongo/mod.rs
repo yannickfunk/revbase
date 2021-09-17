@@ -2303,4 +2303,22 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn does_server_exist_by_nonce(&self, nonce: &str) -> Result<bool> {
+        Ok(self
+            .revolt
+            .collection("servers")
+            .find_one(
+                doc! {
+                    "nonce": nonce
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find_one",
+                with: "server",
+            })?
+            .is_some())
+    }
 }

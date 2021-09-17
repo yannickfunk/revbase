@@ -261,6 +261,7 @@ pub trait Queries {
         default_permission_server: i32,
     ) -> Result<()>;
     async fn delete_role(&self, server_id: &str, role_id: &str) -> Result<()>;
+    async fn does_server_exist_by_nonce(&self, nonce: &str) -> Result<bool>;
 }
 
 #[enum_dispatch(Queries)]
@@ -870,6 +871,10 @@ impl Queries for Database {
 
     async fn delete_role(&self, server_id: &str, role_id: &str) -> Result<()> {
         self.driver.delete_role(server_id, role_id).await
+    }
+
+    async fn does_server_exist_by_nonce(&self, nonce: &str) -> Result<bool> {
+        self.driver.does_server_exist_by_nonce(nonce).await
     }
 }
 

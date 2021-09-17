@@ -535,4 +535,8 @@ impl Queries for Mockup {
     async fn delete_role(&self, server_id: &str, role_id: &str) -> Result<()> {
         todo!()
     }
+
+    async fn does_server_exist_by_nonce(&self, nonce: &str) -> Result<bool> {
+        todo!()
+    }
 }
