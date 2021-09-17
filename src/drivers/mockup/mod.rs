@@ -436,4 +436,8 @@ impl Queries for Mockup {
     async fn get_server_member(&self, server_id: &str, user_id: &str) -> Result<Member> {
         todo!()
     }
+
+    async fn get_server_members(&self, server_id: &str) -> Result<Vec<Member>> {
+        todo!()
+    }
 }
