@@ -197,6 +197,7 @@ pub trait Queries {
 
     // server bans
     async fn delete_server_ban(&self, server_id: &str, user_id: &str) -> Result<()>;
+    async fn is_user_banned(&self, server_id: &str, user_id: &str) -> Result<bool>;
 }
 
 #[enum_dispatch(Queries)]
@@ -658,6 +659,10 @@ impl Queries for Database {
 
     async fn delete_server_ban(&self, server_id: &str, user_id: &str) -> Result<()> {
         self.driver.delete_server_ban(server_id, user_id).await
+    }
+
+    async fn is_user_banned(&self, server_id: &str, user_id: &str) -> Result<bool> {
+        self.driver.is_user_banned(server_id, user_id).await
     }
 }
 

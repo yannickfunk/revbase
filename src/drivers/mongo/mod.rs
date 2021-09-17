@@ -1770,4 +1770,23 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn is_user_banned(&self, server_id: &str, user_id: &str) -> Result<bool> {
+        Ok(self
+            .revolt
+            .collection("server_bans")
+            .find_one(
+                doc! {
+                    "_id.server": server_id,
+                    "_id.user": user_id
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find_one",
+                with: "server_bans",
+            })?
+            .is_some())
+    }
 }

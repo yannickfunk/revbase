@@ -409,4 +409,8 @@ impl Queries for Mockup {
     async fn delete_server_ban(&self, server_id: &str, user_id: &str) -> Result<()> {
         todo!()
     }
+
+    async fn is_user_banned(&self, server_id: &str, user_id: &str) -> Result<bool> {
+        todo!()
+    }
 }
