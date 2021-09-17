@@ -1,5 +1,5 @@
 mod migrations;
-use crate::entities::{BannedUser, Bot, Channel, File, Invite, Message, Subscription, User};
+use crate::entities::{BannedUser, Bot, Channel, File, Invite, Message, Sort, Subscription, User};
 use crate::util::result::*;
 use crate::Queries;
 use migrations::{init, scripts};
@@ -1649,5 +1649,87 @@ impl Queries for MongoDB {
             }
         }
         Ok(msgs)
+    }
+
+    async fn search_messages(
+        &self,
+        channel_id: &str,
+        search: &str,
+        options_before: Option<&str>,
+        options_after: Option<&str>,
+        limit: i64,
+        sort: Sort,
+    ) -> Result<Vec<Message>> {
+        let mut filter = doc! {
+            "channel": channel_id,
+            "$text": {
+                "$search": search
+            }
+        };
+
+        if let Some(doc) = match (options_before, options_after) {
+            (Some(before), Some(after)) => Some(doc! {
+                "lt": before,
+                "gt": after
+            }),
+            (Some(before), _) => Some(doc! {
+                "lt": before
+            }),
+            (_, Some(after)) => Some(doc! {
+                "gt": after
+            }),
+            _ => None,
+        } {
+            filter.insert("_id", doc);
+        }
+
+        let mut cursor = self
+            .revolt
+            .collection("messages")
+            .find(
+                filter,
+                FindOptions::builder()
+                    .projection(if let Sort::Relevance = sort {
+                        doc! {
+                            "score": {
+                                "$meta": "textScore"
+                            }
+                        }
+                    } else {
+                        doc! {}
+                    })
+                    .limit(limit)
+                    .sort(match sort {
+                        Sort::Relevance => doc! {
+                            "score": {
+                                "$meta": "textScore"
+                            }
+                        },
+                        Sort::Latest => doc! {
+                            "_id": -1
+                        },
+                        Sort::Oldest => doc! {
+                            "_id": 1
+                        },
+                    })
+                    .build(),
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find",
+                with: "messages",
+            })?;
+        let mut messages = vec![];
+        while let Some(result) = cursor.next().await {
+            if let Ok(doc) = result {
+                messages.push(
+                    from_document::<Message>(doc).map_err(|_| Error::DatabaseError {
+                        operation: "from_document",
+                        with: "message",
+                    })?,
+                );
+            }
+        }
+        Ok(messages)
     }
 }

@@ -3,7 +3,7 @@
 extern crate mongodb;
 
 use crate::entities::microservice::january::Embed;
-use crate::entities::{BannedUser, Bot, Channel, File, Invite, Message, Subscription, User};
+use crate::entities::{BannedUser, Bot, Channel, File, Invite, Message, Sort, Subscription, User};
 use crate::util::result::Result;
 use drivers::{mockup::Mockup, mongo::MongoDB};
 use enum_dispatch::enum_dispatch;
@@ -183,6 +183,15 @@ pub trait Queries {
         &self,
         message_ids: Vec<&str>,
         channel_id: &str,
+    ) -> Result<Vec<Message>>;
+    async fn search_messages(
+        &self,
+        channel_id: &str,
+        search: &str,
+        options_before: Option<&str>,
+        options_after: Option<&str>,
+        limit: i64,
+        sort: Sort,
     ) -> Result<Vec<Message>>;
 }
 
@@ -613,7 +622,30 @@ impl Queries for Database {
         message_ids: Vec<&str>,
         channel_id: &str,
     ) -> Result<Vec<Message>> {
-        todo!()
+        self.driver
+            .get_messages_by_ids_and_channel(message_ids, channel_id)
+            .await
+    }
+
+    async fn search_messages(
+        &self,
+        channel_id: &str,
+        search: &str,
+        options_before: Option<&str>,
+        options_after: Option<&str>,
+        limit: i64,
+        sort: Sort,
+    ) -> Result<Vec<Message>> {
+        self.driver
+            .search_messages(
+                channel_id,
+                search,
+                options_before,
+                options_after,
+                limit,
+                sort,
+            )
+            .await
     }
 }
 

@@ -16,8 +16,16 @@ use mongodb::{
 
 use crate::entities::microservice::january::Embed;
 use rocket::serde::json::Value;
+use rocket::FromFormField;
 use serde::{Deserialize, Serialize};
 use ulid::Ulid;
+
+#[derive(Serialize, Deserialize, FromFormField)]
+pub enum Sort {
+    Relevance,
+    Latest,
+    Oldest,
+}
 /*
 use web_push::{
     ContentEncoding, SubscriptionInfo, VapidSignatureBuilder, WebPushClient, WebPushMessageBuilder,

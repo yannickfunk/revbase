@@ -1,5 +1,5 @@
 use crate::entities::microservice::january::Embed;
-use crate::entities::{BannedUser, Bot, Channel, File, Invite, Message, Subscription, User};
+use crate::entities::{BannedUser, Bot, Channel, File, Invite, Message, Sort, Subscription, User};
 use crate::util::result::Result;
 use crate::Queries;
 use mongodb::bson::Document;
@@ -386,6 +386,18 @@ impl Queries for Mockup {
         &self,
         message_ids: Vec<&str>,
         channel_id: &str,
+    ) -> Result<Vec<Message>> {
+        todo!()
+    }
+
+    async fn search_messages(
+        &self,
+        channel_id: &str,
+        search: &str,
+        options_before: Option<&str>,
+        options_after: Option<&str>,
+        limit: i64,
+        sort: Sort,
     ) -> Result<Vec<Message>> {
         todo!()
     }
