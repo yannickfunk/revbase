@@ -2047,4 +2047,26 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn delete_role_from_server_members(&self, server_id: &str, role_id: &str) -> Result<()> {
+        self.revolt
+            .collection("server_members")
+            .update_many(
+                doc! {
+                    "_id.server": server_id
+                },
+                doc! {
+                    "$pull": {
+                        "roles": role_id
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_many",
+                with: "server_members",
+            })?;
+        Ok(())
+    }
 }

@@ -227,6 +227,7 @@ pub trait Queries {
         user_id: &str,
         change_doc: Document,
     ) -> Result<()>;
+    async fn delete_role_from_server_members(&self, server_id: &str, role_id: &str) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -753,6 +754,12 @@ impl Queries for Database {
     ) -> Result<()> {
         self.driver
             .apply_server_member_changes(server_id, user_id, change_doc)
+            .await
+    }
+
+    async fn delete_role_from_server_members(&self, server_id: &str, role_id: &str) -> Result<()> {
+        self.driver
+            .delete_role_from_server_members(server_id, role_id)
             .await
     }
 }
