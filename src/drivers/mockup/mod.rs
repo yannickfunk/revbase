@@ -420,6 +420,10 @@ impl Queries for Mockup {
         todo!()
     }
 
+    async fn get_bans(&self, server_id: &str) -> Result<Vec<Ban>> {
+        todo!()
+    }
+
     async fn add_server_ban(
         &self,
         server_id: &str,

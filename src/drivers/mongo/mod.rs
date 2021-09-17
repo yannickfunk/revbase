@@ -1816,6 +1816,33 @@ impl Queries for MongoDB {
         })?)
     }
 
+    async fn get_bans(&self, server_id: &str) -> Result<Vec<Ban>> {
+        let mut cursor = self
+            .revolt
+            .collection("server_bans")
+            .find(
+                doc! {
+                    "_id.server": server_id
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find",
+                with: "server_bans",
+            })?;
+
+        let mut bans = vec![];
+        while let Some(result) = cursor.next().await {
+            if let Ok(doc) = result {
+                if let Ok(ban) = from_document::<Ban>(doc) {
+                    bans.push(ban);
+                }
+            }
+        }
+        Ok(bans)
+    }
+
     async fn add_server_ban(
         &self,
         server_id: &str,
