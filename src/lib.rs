@@ -216,6 +216,11 @@ pub trait Queries {
     async fn delete_server_member(&self, server_id: &str, user_id: &str) -> Result<i64>;
     async fn get_server_member_count(&self, server_id: &str) -> Result<i64>;
     async fn get_users_memberships(&self, user_id: &str) -> Result<Vec<Member>>;
+    async fn is_user_member_in_one_of_servers(
+        &self,
+        user_id: &str,
+        server_ids: Vec<&str>,
+    ) -> Result<bool>;
 }
 
 #[enum_dispatch(Queries)]
@@ -722,6 +727,16 @@ impl Queries for Database {
 
     async fn get_users_memberships(&self, user_id: &str) -> Result<Vec<Member>> {
         self.driver.get_users_memberships(user_id).await
+    }
+
+    async fn is_user_member_in_one_of_servers(
+        &self,
+        user_id: &str,
+        server_ids: Vec<&str>,
+    ) -> Result<bool> {
+        self.driver
+            .is_user_member_in_one_of_servers(user_id, server_ids)
+            .await
     }
 }
 

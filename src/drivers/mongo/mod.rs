@@ -2001,4 +2001,29 @@ impl Queries for MongoDB {
             .filter_map(|x| from_document(x).ok())
             .collect::<Vec<Member>>())
     }
+
+    async fn is_user_member_in_one_of_servers(
+        &self,
+        user_id: &str,
+        server_ids: Vec<&str>,
+    ) -> Result<bool> {
+        Ok(self
+            .revolt
+            .collection("server_members")
+            .find_one(
+                doc! {
+                    "_id.user": user_id,
+                    "_id.server": {
+                        "$in": server_ids
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find_one",
+                with: "server_members",
+            })?
+            .is_some())
+    }
 }

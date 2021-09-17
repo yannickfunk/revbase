@@ -456,4 +456,12 @@ impl Queries for Mockup {
     async fn get_users_memberships(&self, user_id: &str) -> Result<Vec<Member>> {
         todo!()
     }
+
+    async fn is_user_member_in_one_of_servers(
+        &self,
+        user_id: &str,
+        server_ids: Vec<&str>,
+    ) -> Result<bool> {
+        todo!()
+    }
 }
