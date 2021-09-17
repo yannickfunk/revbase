@@ -265,6 +265,11 @@ pub trait Queries {
 
     // user settings
     async fn update_user_settings(&self, user_id: &str, set_doc: Document) -> Result<()>;
+    async fn get_user_settings_doc(
+        &self,
+        user_id: &str,
+        option_keys: Vec<&str>,
+    ) -> Result<Option<Document>>;
 }
 
 #[enum_dispatch(Queries)]
@@ -882,6 +887,16 @@ impl Queries for Database {
 
     async fn update_user_settings(&self, user_id: &str, set_doc: Document) -> Result<()> {
         self.driver.update_user_settings(user_id, set_doc).await
+    }
+
+    async fn get_user_settings_doc(
+        &self,
+        user_id: &str,
+        option_keys: Vec<&str>,
+    ) -> Result<Option<Document>> {
+        self.driver
+            .get_user_settings_doc(user_id, option_keys)
+            .await
     }
 }
 

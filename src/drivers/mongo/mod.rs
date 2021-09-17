@@ -2341,4 +2341,31 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn get_user_settings_doc(
+        &self,
+        user_id: &str,
+        option_keys: Vec<&str>,
+    ) -> Result<Option<Document>> {
+        let mut projection = doc! {
+            "_id": 0,
+        };
+        for key in option_keys {
+            projection.insert(key, 1);
+        }
+        Ok(self
+            .revolt
+            .collection("user_settings")
+            .find_one(
+                doc! {
+                    "_id": user_id
+                },
+                FindOneOptions::builder().projection(projection).build(),
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find_one",
+                with: "user_settings",
+            })?)
+    }
 }

@@ -543,4 +543,12 @@ impl Queries for Mockup {
     async fn update_user_settings(&self, user_id: &str, set_doc: Document) -> Result<()> {
         todo!()
     }
+
+    async fn get_user_settings_doc(
+        &self,
+        user_id: &str,
+        option_keys: Vec<&str>,
+    ) -> Result<Option<Document>> {
+        todo!()
+    }
 }
