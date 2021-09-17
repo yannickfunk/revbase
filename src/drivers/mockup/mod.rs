@@ -496,6 +496,15 @@ impl Queries for Mockup {
         todo!()
     }
 
+    async fn update_server_default_permissions(
+        &self,
+        server_id: &str,
+        server_permissions: i32,
+        channel_permissions: i32,
+    ) -> Result<()> {
+        todo!()
+    }
+
     async fn apply_server_changes(&self, server_id: &str, change_doc: Document) -> Result<()> {
         todo!()
     }

@@ -242,6 +242,12 @@ pub trait Queries {
         server_permissions: i32,
         channel_permissions: i32,
     ) -> Result<()>;
+    async fn update_server_default_permissions(
+        &self,
+        server_id: &str,
+        server_permissions: i32,
+        channel_permissions: i32,
+    ) -> Result<()>;
     async fn apply_server_changes(&self, server_id: &str, change_doc: Document) -> Result<()>;
     async fn add_server(&self, server: &Server) -> Result<()>;
     async fn get_servers(&self, server_ids: Vec<&str>) -> Result<Vec<Server>>;
@@ -800,6 +806,17 @@ impl Queries for Database {
     ) -> Result<()> {
         self.driver
             .update_server_permissions(server_id, role_id, server_permissions, channel_permissions)
+            .await
+    }
+
+    async fn update_server_default_permissions(
+        &self,
+        server_id: &str,
+        server_permissions: i32,
+        channel_permissions: i32,
+    ) -> Result<()> {
+        self.driver
+            .update_server_default_permissions(server_id, server_permissions, channel_permissions)
             .await
     }
 

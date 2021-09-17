@@ -2129,6 +2129,34 @@ impl Queries for MongoDB {
         Ok(())
     }
 
+    async fn update_server_default_permissions(
+        &self,
+        server_id: &str,
+        server_permissions: i32,
+        channel_permissions: i32,
+    ) -> Result<()> {
+        self.revolt
+            .collection("servers")
+            .update_one(
+                doc! { "_id": server_id },
+                doc! {
+                    "$set": {
+                        "default_permissions": [
+                            server_permissions,
+                            channel_permissions
+                        ]
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "server",
+            })?;
+        Ok(())
+    }
+
     async fn apply_server_changes(&self, server_id: &str, change_doc: Document) -> Result<()> {
         self.revolt
             .collection("servers")
