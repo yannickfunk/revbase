@@ -1939,4 +1939,26 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn delete_server_member(&self, server_id: &str, user_id: &str) -> Result<i64> {
+        let delete_count = self
+            .revolt
+            .collection("server_members")
+            .delete_one(
+                doc! {
+                    "_id": {
+                        "server": server_id,
+                        "user": user_id
+                    }
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "delete_one",
+                with: "server_members",
+            })?
+            .deleted_count;
+        Ok(delete_count)
+    }
 }
