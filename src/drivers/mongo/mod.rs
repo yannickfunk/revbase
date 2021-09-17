@@ -2026,4 +2026,25 @@ impl Queries for MongoDB {
             })?
             .is_some())
     }
+
+    async fn apply_server_member_changes(
+        &self,
+        server_id: &str,
+        user_id: &str,
+        change_doc: Document,
+    ) -> Result<()> {
+        self.revolt
+            .collection("server_members")
+            .update_one(
+                doc! { "_id.server": server_id, "_id.user": user_id },
+                change_doc,
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "server_member",
+            })?;
+        Ok(())
+    }
 }

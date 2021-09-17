@@ -464,4 +464,13 @@ impl Queries for Mockup {
     ) -> Result<bool> {
         todo!()
     }
+
+    async fn apply_server_member_changes(
+        &self,
+        server_id: &str,
+        user_id: &str,
+        change_doc: Document,
+    ) -> Result<()> {
+        todo!()
+    }
 }

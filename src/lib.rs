@@ -221,6 +221,12 @@ pub trait Queries {
         user_id: &str,
         server_ids: Vec<&str>,
     ) -> Result<bool>;
+    async fn apply_server_member_changes(
+        &self,
+        server_id: &str,
+        user_id: &str,
+        change_doc: Document,
+    ) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -736,6 +742,17 @@ impl Queries for Database {
     ) -> Result<bool> {
         self.driver
             .is_user_member_in_one_of_servers(user_id, server_ids)
+            .await
+    }
+
+    async fn apply_server_member_changes(
+        &self,
+        server_id: &str,
+        user_id: &str,
+        change_doc: Document,
+    ) -> Result<()> {
+        self.driver
+            .apply_server_member_changes(server_id, user_id, change_doc)
             .await
     }
 }
