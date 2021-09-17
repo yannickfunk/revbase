@@ -4,7 +4,7 @@ extern crate mongodb;
 
 use crate::entities::microservice::january::Embed;
 use crate::entities::{
-    Ban, BannedUser, Bot, Channel, File, Invite, Member, Message, Sort, Subscription, User,
+    Ban, BannedUser, Bot, Channel, File, Invite, Member, Message, Server, Sort, Subscription, User,
 };
 use crate::util::result::Result;
 use drivers::{mockup::Mockup, mongo::MongoDB};
@@ -243,6 +243,7 @@ pub trait Queries {
         channel_permissions: i32,
     ) -> Result<()>;
     async fn apply_server_changes(&self, server_id: &str, change_doc: Document) -> Result<()>;
+    async fn add_server(&self, server: &Server) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -804,6 +805,10 @@ impl Queries for Database {
         self.driver
             .apply_server_changes(server_id, change_doc)
             .await
+    }
+
+    async fn add_server(&self, server: &Server) -> Result<()> {
+        self.driver.add_server(server).await
     }
 }
 

@@ -1,6 +1,6 @@
 use crate::entities::microservice::january::Embed;
 use crate::entities::{
-    Ban, BannedUser, Bot, Channel, File, Invite, Member, Message, Sort, Subscription, User,
+    Ban, BannedUser, Bot, Channel, File, Invite, Member, Message, Server, Sort, Subscription, User,
 };
 use crate::util::result::Result;
 use crate::Queries;
@@ -497,6 +497,10 @@ impl Queries for Mockup {
     }
 
     async fn apply_server_changes(&self, server_id: &str, change_doc: Document) -> Result<()> {
+        todo!()
+    }
+
+    async fn add_server(&self, server: &Server) -> Result<()> {
         todo!()
     }
 }

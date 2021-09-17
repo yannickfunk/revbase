@@ -1,17 +1,16 @@
 use std::collections::HashMap;
 
-use crate::database::*;
-use crate::notifications::events::ClientboundNotification;
+use crate::entities::microservice::autumn::File;
 use crate::util::result::{Error, Result};
 use futures::StreamExt;
-use mongodb::bson::{Bson, doc};
 use mongodb::bson::from_document;
 use mongodb::bson::to_document;
 use mongodb::bson::Document;
+use mongodb::bson::{doc, Bson};
 use rocket::serde::json::Value;
 use serde::{Deserialize, Serialize};
 use ulid::Ulid;
-
+/*
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct MemberCompositeKey {
     pub server: String,
@@ -31,10 +30,10 @@ pub struct Member {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub roles: Option<Vec<String>>
 }
-
+*/
 pub type PermissionTuple = (
     i32, // server permission
-    i32  // channel permission
+    i32, // channel permission
 );
 
 pub fn if_false(t: &bool) -> bool {
@@ -57,16 +56,16 @@ pub struct Role {
 pub struct Category {
     pub id: String,
     pub title: String,
-    pub channels: Vec<String>
+    pub channels: Vec<String>,
 }
-
+/*
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Ban {
     #[serde(rename = "_id")]
     pub id: MemberCompositeKey,
     pub reason: Option<String>,
 }
-
+*/
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct SystemMessageChannels {
     pub user_joined: Option<String>,
@@ -74,13 +73,13 @@ pub struct SystemMessageChannels {
     pub user_kicked: Option<String>,
     pub user_banned: Option<String>,
 }
-
+/*
 pub enum RemoveMember {
     Leave,
     Kick,
     Ban,
 }
-
+*/
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Server {
     #[serde(rename = "_id")]
@@ -92,7 +91,7 @@ pub struct Server {
     pub name: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
-    
+
     pub channels: Vec<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub categories: Option<Vec<Category>>,
@@ -109,9 +108,10 @@ pub struct Server {
     pub banner: Option<File>,
 
     #[serde(skip_serializing_if = "if_false", default)]
-    pub nsfw: bool
+    pub nsfw: bool,
 }
 
+/*
 impl Server {
     pub async fn create(self) -> Result<()> {
         get_collection("servers")
@@ -439,3 +439,4 @@ impl Server {
             })?)
     }
 }
+*/

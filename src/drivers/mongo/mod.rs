@@ -1,6 +1,6 @@
 mod migrations;
 use crate::entities::{
-    Ban, BannedUser, Bot, Channel, File, Invite, Member, Message, Sort, Subscription, User,
+    Ban, BannedUser, Bot, Channel, File, Invite, Member, Message, Server, Sort, Subscription, User,
 };
 use crate::util::result::*;
 use crate::Queries;
@@ -2144,6 +2144,25 @@ impl Queries for MongoDB {
                 operation: "update_one",
                 with: "servers",
             })?;
+        Ok(())
+    }
+
+    async fn add_server(&self, server: &Server) -> Result<()> {
+        self.revolt
+            .collection("servers")
+            .insert_one(
+                to_document(server).map_err(|_| Error::DatabaseError {
+                    operation: "to_bson",
+                    with: "channel",
+                })?,
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "insert_one",
+                with: "server",
+            })?;
+
         Ok(())
     }
 }

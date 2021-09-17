@@ -11,6 +11,7 @@ mod file;
 mod invites;
 mod message;
 pub(crate) mod microservice;
+mod server;
 mod user;
 /*
 
@@ -30,4 +31,5 @@ pub use channel::*;
 pub use file::*;
 pub use invites::*;
 pub use message::*;
+pub use server::*;
 pub use user::*;
