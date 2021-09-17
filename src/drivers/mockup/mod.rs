@@ -381,4 +381,12 @@ impl Queries for Mockup {
     async fn delete_message(&self, message_id: &str) -> Result<()> {
         todo!()
     }
+
+    async fn get_messages_by_ids_and_channel(
+        &self,
+        message_ids: Vec<&str>,
+        channel_id: &str,
+    ) -> Result<Vec<Message>> {
+        todo!()
+    }
 }

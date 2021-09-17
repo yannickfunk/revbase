@@ -1614,4 +1614,40 @@ impl Queries for MongoDB {
             })?;
         Ok(())
     }
+
+    async fn get_messages_by_ids_and_channel(
+        &self,
+        message_ids: Vec<&str>,
+        channel_id: &str,
+    ) -> Result<Vec<Message>> {
+        let mut cursor = self
+            .revolt
+            .collection("messages")
+            .find(
+                doc! {
+                    "_id": {
+                        "$in": message_ids
+                    },
+                    "channel": channel_id
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find",
+                with: "messages",
+            })?;
+
+        let mut msgs = vec![];
+        while let Some(result) = cursor.next().await {
+            if let Ok(doc) = result {
+                let msg = from_document::<Message>(doc).map_err(|_| Error::DatabaseError {
+                    operation: "from_document",
+                    with: "message",
+                })?;
+                msgs.push(msg);
+            }
+        }
+        Ok(msgs)
+    }
 }

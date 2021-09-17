@@ -179,8 +179,11 @@ pub trait Queries {
     async fn add_message(&self, message: &Message) -> Result<()>;
     async fn add_embeds_to_message(&self, message_id: &str, embeds: &Vec<Embed>) -> Result<()>;
     async fn delete_message(&self, message_id: &str) -> Result<()>;
-
-    // TODO remaining collections
+    async fn get_messages_by_ids_and_channel(
+        &self,
+        message_ids: Vec<&str>,
+        channel_id: &str,
+    ) -> Result<Vec<Message>>;
 }
 
 #[enum_dispatch(Queries)]
@@ -603,6 +606,14 @@ impl Queries for Database {
 
     async fn delete_message(&self, message_id: &str) -> Result<()> {
         self.driver.delete_message(message_id).await
+    }
+
+    async fn get_messages_by_ids_and_channel(
+        &self,
+        message_ids: Vec<&str>,
+        channel_id: &str,
+    ) -> Result<Vec<Message>> {
+        todo!()
     }
 }
 
