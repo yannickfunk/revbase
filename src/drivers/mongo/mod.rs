@@ -1961,4 +1961,21 @@ impl Queries for MongoDB {
             .deleted_count;
         Ok(delete_count)
     }
+
+    async fn get_server_member_count(&self, server_id: &str) -> Result<i64> {
+        Ok(self
+            .revolt
+            .collection("server_members")
+            .count_documents(
+                doc! {
+                    "_id.server": server_id
+                },
+                None,
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "count_documents",
+                with: "server_members",
+            })?)
+    }
 }

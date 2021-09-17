@@ -448,4 +448,8 @@ impl Queries for Mockup {
     async fn delete_server_member(&self, server_id: &str, user_id: &str) -> Result<i64> {
         todo!()
     }
+
+    async fn get_server_member_count(&self, server_id: &str) -> Result<i64> {
+        todo!()
+    }
 }
