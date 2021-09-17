@@ -262,6 +262,9 @@ pub trait Queries {
     ) -> Result<()>;
     async fn delete_role(&self, server_id: &str, role_id: &str) -> Result<()>;
     async fn does_server_exist_by_nonce(&self, nonce: &str) -> Result<bool>;
+
+    // user settings
+    async fn update_user_settings(&self, user_id: &str, set_doc: Document) -> Result<()>;
 }
 
 #[enum_dispatch(Queries)]
@@ -875,6 +878,10 @@ impl Queries for Database {
 
     async fn does_server_exist_by_nonce(&self, nonce: &str) -> Result<bool> {
         self.driver.does_server_exist_by_nonce(nonce).await
+    }
+
+    async fn update_user_settings(&self, user_id: &str, set_doc: Document) -> Result<()> {
+        self.driver.update_user_settings(user_id, set_doc).await
     }
 }
 

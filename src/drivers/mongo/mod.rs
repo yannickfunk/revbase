@@ -2321,4 +2321,24 @@ impl Queries for MongoDB {
             })?
             .is_some())
     }
+
+    async fn update_user_settings(&self, user_id: &str, set_doc: Document) -> Result<()> {
+        self.revolt
+            .collection("user_settings")
+            .update_one(
+                doc! {
+                    "_id": user_id
+                },
+                doc! {
+                    "$set": set_doc
+                },
+                UpdateOptions::builder().upsert(true).build(),
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "update_one",
+                with: "user_settings",
+            })?;
+        Ok(())
+    }
 }

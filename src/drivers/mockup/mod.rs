@@ -539,4 +539,8 @@ impl Queries for Mockup {
     async fn does_server_exist_by_nonce(&self, nonce: &str) -> Result<bool> {
         todo!()
     }
+
+    async fn update_user_settings(&self, user_id: &str, set_doc: Document) -> Result<()> {
+        todo!()
+    }
 }
