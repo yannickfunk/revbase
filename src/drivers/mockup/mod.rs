@@ -1,5 +1,7 @@
 use crate::entities::microservice::january::Embed;
-use crate::entities::{BannedUser, Bot, Channel, File, Invite, Message, Sort, Subscription, User};
+use crate::entities::{
+    Ban, BannedUser, Bot, Channel, File, Invite, Message, Sort, Subscription, User,
+};
 use crate::util::result::Result;
 use crate::Queries;
 use mongodb::bson::Document;
@@ -411,6 +413,10 @@ impl Queries for Mockup {
     }
 
     async fn is_user_banned(&self, server_id: &str, user_id: &str) -> Result<bool> {
+        todo!()
+    }
+
+    async fn get_ban(&self, server_id: &str, user_id: &str) -> Result<Ban> {
         todo!()
     }
 }

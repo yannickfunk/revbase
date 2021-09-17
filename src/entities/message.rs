@@ -20,6 +20,19 @@ use rocket::FromFormField;
 use serde::{Deserialize, Serialize};
 use ulid::Ulid;
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct MemberCompositeKey {
+    pub server: String,
+    pub user: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Ban {
+    #[serde(rename = "_id")]
+    pub id: MemberCompositeKey,
+    pub reason: Option<String>,
+}
+
 #[derive(Serialize, Deserialize, FromFormField)]
 pub enum Sort {
     Relevance,
