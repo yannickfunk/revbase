@@ -401,4 +401,8 @@ impl Queries for Mockup {
     ) -> Result<Vec<Message>> {
         todo!()
     }
+
+    async fn does_message_exist_by_nonce(&self, nonce: &str) -> Result<bool> {
+        todo!()
+    }
 }

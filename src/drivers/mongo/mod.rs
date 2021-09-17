@@ -1732,4 +1732,24 @@ impl Queries for MongoDB {
         }
         Ok(messages)
     }
+
+    async fn does_message_exist_by_nonce(&self, nonce: &str) -> Result<bool> {
+        Ok(self
+            .revolt
+            .collection("messages")
+            .find_one(
+                doc! {
+                    "nonce": nonce
+                },
+                FindOneOptions::builder()
+                    .projection(doc! { "_id": 1 })
+                    .build(),
+            )
+            .await
+            .map_err(|_| Error::DatabaseError {
+                operation: "find_one",
+                with: "message",
+            })?
+            .is_some())
+    }
 }

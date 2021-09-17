@@ -193,6 +193,7 @@ pub trait Queries {
         limit: i64,
         sort: Sort,
     ) -> Result<Vec<Message>>;
+    async fn does_message_exist_by_nonce(&self, nonce: &str) -> Result<bool>;
 }
 
 #[enum_dispatch(Queries)]
@@ -646,6 +647,10 @@ impl Queries for Database {
                 sort,
             )
             .await
+    }
+
+    async fn does_message_exist_by_nonce(&self, nonce: &str) -> Result<bool> {
+        self.driver.does_message_exist_by_nonce(nonce).await
     }
 }
 
